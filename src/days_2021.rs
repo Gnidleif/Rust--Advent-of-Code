@@ -4,6 +4,12 @@ use std::{
     error::Error,
 };
 
+macro_rules! aw {
+    ($e:expr) => {
+        tokio_test::block_on($e)
+    };
+}
+
 pub trait Day {
     fn part1(&self) -> i64;
     fn part2(&self) -> i64;
@@ -16,8 +22,8 @@ pub struct Day1 {
 }
 
 impl Day1 {
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aoc_input::create_input(2021, 1).await?;
+    pub fn new() -> Result<Self, Box<dyn Error>> {
+        let content = aw!(aoc_input::create_input(2021, 1))?;
 
         Ok(Day1 {
             input: content.lines().map(|x| x.parse::<u16>().unwrap()).collect(),
@@ -80,8 +86,8 @@ pub struct Day2 {
 }
 
 impl Day2 {
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aoc_input::create_input(2021, 2).await?;
+    pub fn new() -> Result<Self, Box<dyn Error>> {
+        let content = aw!(aoc_input::create_input(2021, 2))?;
 
         Ok(Day2 {
 
