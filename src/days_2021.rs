@@ -9,7 +9,7 @@ pub trait Day {
     fn part2(&self) -> i64;
 }
 
-/* #region Day1 */
+// #region Day 1
 
 pub struct Day1 {
     input: Vec<u16>,
@@ -71,4 +71,32 @@ impl Day for Day1 {
     }
 }
 
-/* #endregion */
+// #endregion
+
+// #region Day2
+
+pub struct Day2 {
+
+}
+
+impl Day2 {
+    pub async fn new() -> Result<Self, Box<dyn Error>> {
+        let content = aoc_input::create_input(2021, 2).await?;
+
+        Ok(Day2 {
+
+        })
+    }
+}
+
+impl Day for Day2 {
+    fn part1(&self) -> i64 {
+        0
+    }
+
+    fn part2(&self) -> i64 {
+        0
+    }
+}
+
+// #endregion
