@@ -19,7 +19,7 @@ pub async fn create_input(year: u16, day: u8) -> Result<String, Box<dyn Error>> 
             std::fs::create_dir_all(dir_path)?;
         }
 
-        let session = std::fs::read_to_string("session.log")?.trim().to_string();
+        let session = include_str!("../session.log");
         let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
         let content = request_content(session, url).await?;
         std::fs::write(&file_path, &content.trim())?;
@@ -28,7 +28,7 @@ pub async fn create_input(year: u16, day: u8) -> Result<String, Box<dyn Error>> 
     Ok(std::fs::read_to_string(file_path)?.parse()?)
 }
 
-async fn request_content(session: String, url: String) -> Result<String, Box<dyn Error>> {
+async fn request_content(session: &str, url: String) -> Result<String, Box<dyn Error>> {
     let cookie = format!("session={}", session);
     let mut request_headers = HeaderMap::new();
     request_headers.insert(
