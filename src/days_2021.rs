@@ -1,7 +1,13 @@
+#![allow(dead_code)]
 use std::{
     result::Result,
     error::Error,
 };
+
+pub trait Day {
+    fn part1(&self) -> i64;
+    fn part2(&self) -> i64;
+}
 
 /* #region Day1 */
 
@@ -18,8 +24,7 @@ impl Day1 {
         })
     }
 
-    #[allow(dead_code)]
-    fn part1_old(&self) -> i64 {
+    pub fn part1_old(&self) -> i64 {
         let mut sum = 0;
         for i in 1..self.input.len() {
             if self.input[i] > self.input[i - 1] {
@@ -29,13 +34,12 @@ impl Day1 {
 
         sum
     }
-
-    #[allow(dead_code)]
-    fn part2_old(&self) -> i64 {
+    
+    pub fn part2_old(&self) -> i64 {
         let mut sum = 0;
-        let mut last = self.input[0..=2].into_iter().sum::<u16>();
+        let mut last = self.input[0..=2].iter().sum::<u16>();
         for i in 1..self.input.len() - 2 {
-            let current = self.input[i..=i+2].into_iter().sum::<u16>();
+            let current = self.input[i..=i+2].iter().sum::<u16>();
             if current > last {
                 sum += 1;
             }
@@ -46,7 +50,7 @@ impl Day1 {
     }
 }
 
-impl aoc_input::Day for Day1 {
+impl Day for Day1 {
     fn part1(&self) -> i64 {
         self.input
             .iter()

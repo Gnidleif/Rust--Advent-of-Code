@@ -16,3 +16,4 @@ path = "src/main.rs"
 reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1.14.0", features=["full"] }
 http = "0.2.5"
+tokio-test = "0.4.2"

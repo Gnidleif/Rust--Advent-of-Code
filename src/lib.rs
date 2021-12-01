@@ -2,13 +2,9 @@ use std::{
     result::Result, 
     error::Error,
     path::Path,
+    fs,
 };
 use http::{header::{HeaderMap}, HeaderValue};
-
-pub trait Day {
-    fn part1(&self) -> i64;
-    fn part2(&self) -> i64;
-}
 
 pub async fn create_input(year: u16, day: u8) -> Result<String, Box<dyn Error>> {
     let dir_path = format!("./input/{}", year);
@@ -16,16 +12,16 @@ pub async fn create_input(year: u16, day: u8) -> Result<String, Box<dyn Error>> 
 
     if !Path::new(&file_path).is_file() {
         if !Path::new(&dir_path).is_dir() {
-            std::fs::create_dir_all(dir_path)?;
+            fs::create_dir_all(dir_path)?;
         }
 
-        let session = include_str!("../session.log");
+        let session = fs::read_to_string("session.log")?;
         let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
-        let content = request_content(session, url).await?;
-        std::fs::write(&file_path, &content.trim())?;
+        let content = request_content(session.trim(), url).await?;
+        fs::write(&file_path, &content.trim())?;
     }
 
-    Ok(std::fs::read_to_string(file_path)?.parse()?)
+    Ok(fs::read_to_string(file_path)?.parse()?)
 }
 
 async fn request_content(session: &str, url: String) -> Result<String, Box<dyn Error>> {
@@ -33,7 +29,7 @@ async fn request_content(session: &str, url: String) -> Result<String, Box<dyn E
     let mut request_headers = HeaderMap::new();
     request_headers.insert(
         http::header::COOKIE,
-        HeaderValue::from_str(&cookie[..])?,
+        HeaderValue::from_str(&cookie)?,
     );
 
     let client = reqwest::Client::builder()
