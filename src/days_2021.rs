@@ -5,8 +5,8 @@ use std::{
 };
 
 pub trait Day {
-    fn part1(&self) -> i64;
-    fn part2(&self) -> i64;
+    fn part1(&self) -> i32;
+    fn part2(&self) -> i32;
 }
 
 // #region Day 1
@@ -24,7 +24,7 @@ impl Day1 {
         })
     }
 
-    pub fn part1_old(&self) -> i64 {
+    pub fn part1_old(&self) -> i32 {
         let mut sum = 0;
         for i in 1..self.input.len() {
             if self.input[i] > self.input[i - 1] {
@@ -35,7 +35,7 @@ impl Day1 {
         sum
     }
 
-    pub fn part2_old(&self) -> i64 {
+    pub fn part2_old(&self) -> i32 {
         let mut sum = 0;
         let mut last = self.input[0..=2].iter().sum::<u16>();
         for i in 1..self.input.len() - 2 {
@@ -51,7 +51,7 @@ impl Day1 {
 }
 
 impl Day for Day1 {
-    fn part1(&self) -> i64 {
+    fn part1(&self) -> i32 {
         self.input
             .iter()
             .zip(self.input.iter().skip(1))
@@ -61,7 +61,7 @@ impl Day for Day1 {
             .unwrap()
     }
 
-    fn part2(&self) -> i64 {
+    fn part2(&self) -> i32 {
         self.input
             .windows(4)
             .filter(|w| w[3] > w[0])
@@ -75,8 +75,14 @@ impl Day for Day1 {
 
 // #region Day2
 
+enum Day2Moves {
+    Forward(i32),
+    Up(i32),
+    Down(i32),
+}
+
 pub struct Day2 {
-    input: Vec<(String, i64)>,
+    input: Vec<Day2Moves>,
 }
 
 impl Day2 {
@@ -85,40 +91,45 @@ impl Day2 {
 
         Ok(Day2 {
             input: content.lines()
-                    .map(|x| x.split_whitespace().collect::<Vec<&str>>())
-                    .map(|x| (x[0].to_string(), x[1].parse().unwrap()))
-                    .collect(),
+            .map(|x| x.split_whitespace().collect::<Vec<&str>>())
+            .map(|x| {
+                let n = x[1].parse().unwrap();
+                match x[0] {
+                    "forward" => Day2Moves::Forward(n),
+                    "up" => Day2Moves::Up(n),
+                    "down" => Day2Moves::Down(n),
+                    _ => unreachable!(),
+                }
+            }).collect(),
         })
     }
 }
 
 impl Day for Day2 {
-    fn part1(&self) -> i64 {
-        let mut pos: (i64, i64) = (0, 0);
-        for (dir, len) in self.input.iter() {
-            match &dir[..] {
-                "forward" => pos.0 += len,
-                "up" => pos.1 -= len,
-                "down" => pos.1 += len,
-                _ => continue,
+    fn part1(&self) -> i32 {
+        let mut pos: (i32, i32) = (0, 0);
+        for mv in self.input.iter() {
+            match mv {
+                Day2Moves::Forward(n) => pos.0 += n,
+                Day2Moves::Up(n) => pos.1 -= n,
+                Day2Moves::Down(n) => pos.1 += n,
             }
         }
 
         pos.0 * pos.1
     }
 
-    fn part2(&self) -> i64 {
-        let mut aim: i64 = 0;
-        let mut pos: (i64, i64) = (0, 0);
-        for (dir, len) in self.input.iter() {
-            match &dir[..] {
-                "forward" => {
-                    pos.0 += len;
-                    pos.1 += len * aim;
+    fn part2(&self) -> i32 {
+        let mut aim = 0;
+        let mut pos = (0, 0);
+        for mv in self.input.iter() {
+            match mv {
+                Day2Moves::Forward(n) => {
+                    pos.0 += n;
+                    pos.1 += n * aim;
                 },
-                "up" => aim -= len,
-                "down" => aim += len,
-                _ => continue,
+                Day2Moves::Up(n) => aim -= n,
+                Day2Moves::Down(n) => pos.2 += n,
             }
         }
 
