@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["tim fielding <gnidleif@gmail.com>"]
 
 [lib]
-name = "aoc_input"
+name = "aoc_lib"
 path =  "src/lib.rs"
 
 [[bin]]

@@ -48,3 +48,15 @@ async fn request_content(session: &str, url: String) -> Result<String, Box<dyn E
         Err(err) => Err(err.into())
     }
 }
+
+#[macro_export]
+macro_rules! aw {
+    ($e:expr) => {
+        tokio_test::block_on($e)
+    };
+}
+
+pub trait Day {
+    fn part1(&self) -> i32;
+    fn part2(&self) -> i32;
+}
