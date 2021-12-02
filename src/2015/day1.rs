@@ -40,7 +40,7 @@ impl aoc_lib::Day for Day {
                     (i, acc.1 + x)
                 });
 
-        idx as i32
+        (idx + 1) as i32
     }
 
     fn fmt_result(&self) -> String {

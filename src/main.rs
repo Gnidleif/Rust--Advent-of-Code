@@ -10,6 +10,7 @@ use std::{
 async fn main() -> Result<(), Box<dyn Error>> {
     let days: Vec<Box<dyn aoc_lib::Day>> = vec![
         Box::new(_2015::day1::Day::new().await?),
+        Box::new(_2015::day2::Day::new().await?),
         Box::new(_2021::day1::Day::new().await?),
         Box::new(_2021::day2::Day::new().await?),
     ];
