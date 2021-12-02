@@ -4,11 +4,11 @@ use std::{
     error::Error,
 };
 
-macro_rules! aw {
-    ($e:expr) => {
-        tokio_test::block_on($e)
-    };
-}
+// macro_rules! aw {
+//     ($e:expr) => {
+//         tokio_test::block_on($e)
+//     };
+// }
 
 pub trait Day {
     fn part1(&self) -> i64;
@@ -22,8 +22,8 @@ pub struct Day1 {
 }
 
 impl Day1 {
-    pub fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aw!(aoc_input::create_input(2021, 1))?;
+    pub async fn new() -> Result<Self, Box<dyn Error>> {
+        let content = aoc_input::create_input(2021, 1).await?;
 
         Ok(Day1 {
             input: content.lines().map(|x| x.parse::<u16>().unwrap()).collect(),
@@ -86,8 +86,20 @@ pub struct Day2 {
 }
 
 impl Day2 {
-    pub fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aw!(aoc_input::create_input(2021, 2))?;
+    pub async fn new() -> Result<Self, Box<dyn Error>> {
+        let content = aoc_input::create_input(2021, 2).await?;
+        // let commands: Vec<Vec<String>> = content
+        //     .lines()
+        //     .map(|x| x.to_string().split_whitespace().map(|x| x.trim().to_string()).collect())
+        //     .collect();
+        let commands: Vec<Vec<String>> = content
+            .lines()
+            .map(|x| x.split_whitespace().map(|x| x.trim().to_string()).collect())
+            .collect();
+
+        for line in commands.iter() {
+            println!("{:?}", line);
+        }
 
         Ok(Day2 {
 
