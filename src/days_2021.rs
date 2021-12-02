@@ -107,33 +107,25 @@ impl Day2 {
 
 impl Day for Day2 {
     fn part1(&self) -> i32 {
-        let mut pos: (i32, i32) = (0, 0);
-        for mv in self.input.iter() {
-            match mv {
-                Day2Moves::Forward(n) => pos.0 += n,
-                Day2Moves::Up(n) => pos.1 -= n,
-                Day2Moves::Down(n) => pos.1 += n,
-            }
-        }
-
-        pos.0 * pos.1
+        let (x, y) = self.input.iter()
+            .fold((0, 0), |(x, y), mv| match mv {
+                Day2Moves::Forward(n) => (x + n, y),
+                Day2Moves::Up(n) => (x, y - n),
+                Day2Moves::Down(n) => (x, y + n),
+            });
+        
+        x * y
     }
 
     fn part2(&self) -> i32 {
-        let mut aim = 0;
-        let mut pos = (0, 0);
-        for mv in self.input.iter() {
-            match mv {
-                Day2Moves::Forward(n) => {
-                    pos.0 += n;
-                    pos.1 += n * aim;
-                },
-                Day2Moves::Up(n) => aim -= n,
-                Day2Moves::Down(n) => pos.2 += n,
-            }
-        }
+        let (x, y, _) = self.input.iter()
+            .fold((0, 0, 0), |(x, y, a), mv| match mv {
+                Day2Moves::Forward(n) => (x + n, y + a * n, a),
+                Day2Moves::Up(n) => (x, y, a - n),
+                Day2Moves::Down(n) => (x, y, a + n),
+            });
 
-        pos.0 * pos.1
+        x * y
     }
 }
 
