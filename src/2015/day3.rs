@@ -57,26 +57,23 @@ impl aoc_lib::Day for Day {
     }
 
     fn part2(&self) -> i32 {
-        let mut points = self.input.iter().enumerate()
+        self.input.iter().enumerate()
         .filter(|(i, _)| i ^ 1 == i + 1)
         .fold(vec![(0, 0)], |mut acc, (_, dir)| {
             acc.push(Day::fold_helper(&acc, dir));
             acc
-        });
-        
-        let mut robot = self.input.iter().enumerate()
+        })
+        .iter().chain(self.input.iter().enumerate()
         .filter(|(i, _)| i ^ 1 != i + 1)
         .fold(vec![(0, 0)], |mut acc, (_, dir)| {
             acc.push(Day::fold_helper(&acc, dir));
             acc
-        });
-        
-        points.append(&mut robot);
-
-        points.iter().fold(HashSet::new(), |mut acc, point| {
+        }).iter())
+        .fold(HashSet::new(), |mut acc, point| {
             acc.insert(point);
             acc
-        }).len() as i32
+        })
+        .len() as i32
     }
 
     fn fmt_result(&self) -> String {

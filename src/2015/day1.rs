@@ -2,6 +2,10 @@ use std::{
     result::Result,
     error::Error,
 };
+use itertools::{
+    Itertools,
+    FoldWhile::{Continue, Done},
+};
 
 pub struct Day {
     input: Vec<i32>
@@ -24,22 +28,19 @@ impl Day {
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> i32 {
-        let sum = self.input.iter()
-            .fold(0, |acc, x| acc + x);
-
-        sum
+        self.input.iter().sum::<i32>()
     }
 
     fn part2(&self) -> i32 {
         let (idx, _) = self.input.iter()
             .enumerate()
-            .fold((0, 0), |acc, (i, x)| 
+            .fold_while((0, 0), |acc, (i, x)| 
                 if acc.1 < 0 {
-                    acc
+                    Done(acc)
                 }
                 else {
-                    (i, acc.1 + x)
-                });
+                    Continue((i, acc.1 + x))
+                }).into_inner();
 
         (idx + 1) as i32
     }
