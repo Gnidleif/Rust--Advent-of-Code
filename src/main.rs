@@ -24,6 +24,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
 //     use super::days_2021;
 //     use days_2021::Day;
 
+// macro_rules! aw {
+//     ($e:expr) => {
+//         tokio_test::block_on($e)
+//     };
+// }
+
 //     #[test]
 //     fn d1p1_old() {
 //         let d = days_2021::Day1::new().unwrap();

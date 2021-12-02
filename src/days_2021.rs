@@ -4,12 +4,6 @@ use std::{
     error::Error,
 };
 
-// macro_rules! aw {
-//     ($e:expr) => {
-//         tokio_test::block_on($e)
-//     };
-// }
-
 pub trait Day {
     fn part1(&self) -> i64;
     fn part2(&self) -> i64;
@@ -40,7 +34,7 @@ impl Day1 {
 
         sum
     }
-    
+
     pub fn part2_old(&self) -> i64 {
         let mut sum = 0;
         let mut last = self.input[0..=2].iter().sum::<u16>();
@@ -90,10 +84,9 @@ impl Day2 {
         let content = aoc_input::create_input(2021, 2).await?;
 
         Ok(Day2 {
-            input: content
-                    .lines()
+            input: content.lines()
                     .map(|x| x.split_whitespace().collect::<Vec<&str>>())
-                    .map(|x| (x[0].to_string(), x[1].parse::<i64>().unwrap()))
+                    .map(|x| (x[0].to_string(), x[1].parse().unwrap()))
                     .collect(),
         })
     }
