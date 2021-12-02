@@ -3,15 +3,15 @@ use std::{
     error::Error,
 };
 
-pub struct Day1 {
+pub struct Day {
     input: Vec<u16>,
 }
 
-impl Day1 {
+impl Day {
     pub async fn new() -> Result<Self, Box<dyn Error>> {
         let content = aoc_lib::create_input(2021, 1).await?;
 
-        Ok(Day1 {
+        Ok(Day {
             input: content.lines().map(|x| x.parse::<u16>().unwrap()).collect(),
         })
     }
@@ -44,7 +44,7 @@ impl Day1 {
     }
 }
 
-impl aoc_lib::Day for Day1 {
+impl aoc_lib::Day for Day {
     fn part1(&self) -> i32 {
         self.input
             .iter()
@@ -63,15 +63,18 @@ impl aoc_lib::Day for Day1 {
             .try_into()
             .unwrap()
     }
+
+    fn fmt_result(&self) -> String {
+        format!("Day1 (2021): ({}, {})", self.part1(), self.part2())
+    }
 }
 
 #[cfg(test)]
 mod day1_testing {
-    use super::Day1;
     use aoc_lib::{Day, aw};
 
-    fn new() -> Day1 {
-        aw!(Day1::new()).unwrap()
+    fn new() -> super::Day {
+        aw!(super::Day::new()).unwrap()
     }
 
     #[test]

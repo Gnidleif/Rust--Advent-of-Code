@@ -9,15 +9,15 @@ enum Moves {
     Down(i32),
 }
 
-pub struct Day2 {
+pub struct Day {
     input: Vec<Moves>,
 }
 
-impl Day2 {
+impl Day {
     pub async fn new() -> Result<Self, Box<dyn Error>> {
         let content = aoc_lib::create_input(2021, 2).await?;
 
-        Ok(Day2 {
+        Ok(Day {
             input: content.lines()
             .map(|x| x.split_whitespace().collect::<Vec<&str>>())
             .map(|x| {
@@ -65,7 +65,7 @@ impl Day2 {
     }
 }
 
-impl aoc_lib::Day for Day2 {
+impl aoc_lib::Day for Day {
     fn part1(&self) -> i32 {
         let (x, y) = self.input.iter()
             .fold((0, 0), |(x, y), mv| match mv {
@@ -87,15 +87,18 @@ impl aoc_lib::Day for Day2 {
 
         x * y
     }
+    
+    fn fmt_result(&self) -> String {
+        format!("Day2 (2021): ({}, {})", self.part1(), self.part2())
+    }
 }
 
 #[cfg(test)]
 mod day2_testing {
-    use super::Day2;
     use aoc_lib::{Day, aw};
 
-    fn new() -> Day2 {
-        aw!(Day2::new()).unwrap()
+    fn new() -> super::Day {
+        aw!(super::Day::new()).unwrap()
     }
 
     #[test]

@@ -3,20 +3,19 @@ use std::{
     error::Error
 };
 
-#[path = "2021/day1.rs"] mod day1_2021;
-#[path = "2021/day2.rs"] mod day2_2021;
-use day1_2021::Day1;
-use day2_2021::Day2;
+#[path = "2015/2015.rs"] mod _2015;
+#[path = "2021/2021.rs"] mod _2021;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let days: Vec<Box<dyn aoc_lib::Day>> = vec![
-        Box::new(Day1::new().await?),
-        Box::new(Day2::new().await?),
+        Box::new(_2015::day1::Day::new().await?),
+        Box::new(_2021::day1::Day::new().await?),
+        Box::new(_2021::day2::Day::new().await?),
     ];
 
-    for (i, day) in days.iter().enumerate() {
-        println!("Day #{}: ({}, {})", i+1, day.part1(), day.part2());
+    for day in days.iter() {
+        println!("{}", day.fmt_result());
     }
 
     Ok(())
