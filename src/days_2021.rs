@@ -82,38 +82,54 @@ impl Day for Day1 {
 // #region Day2
 
 pub struct Day2 {
-
+    input: Vec<(String, i64)>,
 }
 
 impl Day2 {
     pub async fn new() -> Result<Self, Box<dyn Error>> {
         let content = aoc_input::create_input(2021, 2).await?;
-        // let commands: Vec<Vec<String>> = content
-        //     .lines()
-        //     .map(|x| x.to_string().split_whitespace().map(|x| x.trim().to_string()).collect())
-        //     .collect();
-        let commands: Vec<Vec<String>> = content
-            .lines()
-            .map(|x| x.split_whitespace().map(|x| x.trim().to_string()).collect())
-            .collect();
-
-        for line in commands.iter() {
-            println!("{:?}", line);
-        }
 
         Ok(Day2 {
-
+            input: content
+                    .lines()
+                    .map(|x| x.split_whitespace().collect::<Vec<&str>>())
+                    .map(|x| (x[0].to_string(), x[1].parse::<i64>().unwrap()))
+                    .collect(),
         })
     }
 }
 
 impl Day for Day2 {
     fn part1(&self) -> i64 {
-        0
+        let mut pos: (i64, i64) = (0, 0);
+        for (dir, len) in self.input.iter() {
+            match &dir[..] {
+                "forward" => pos.0 += len,
+                "up" => pos.1 -= len,
+                "down" => pos.1 += len,
+                _ => continue,
+            }
+        }
+
+        pos.0 * pos.1
     }
 
     fn part2(&self) -> i64 {
-        0
+        let mut aim: i64 = 0;
+        let mut pos: (i64, i64) = (0, 0);
+        for (dir, len) in self.input.iter() {
+            match &dir[..] {
+                "forward" => {
+                    pos.0 += len;
+                    pos.1 += len * aim;
+                },
+                "up" => aim -= len,
+                "down" => aim += len,
+                _ => continue,
+            }
+        }
+
+        pos.0 * pos.1
     }
 }
 

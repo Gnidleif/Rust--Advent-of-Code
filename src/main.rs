@@ -12,9 +12,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         Box::new(days_2021::Day2::new().await?),
     ];
 
-    for day in days.iter() {
-        println!("{}", day.part1());
-        println!("{}", day.part2());
+    for (i, day) in days.iter().enumerate() {
+        println!("Day #{}: ({}, {})", i+1, day.part1(), day.part2());
     }
 
     Ok(())
