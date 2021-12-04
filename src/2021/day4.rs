@@ -181,7 +181,7 @@ mod testing {
     #[test]
     fn run() {
         let day = aw!(super::Day::new()).unwrap();
-        assert_eq!(0, day.part1());
-        assert_eq!(0, day.part2());
+        assert_eq!(87456, day.part1());
+        assert_eq!(15561, day.part2());
     }
 }
