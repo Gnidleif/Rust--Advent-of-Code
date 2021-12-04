@@ -1,6 +1,7 @@
 use std::{
     result::Result,
     error::Error,
+    time::Instant,
 };
 
 pub struct Day {
@@ -65,35 +66,26 @@ impl aoc_lib::Day for Day {
     }
 
     fn fmt_result(&self) -> String {
-        format!("Day1 (2021): ({}, {})", self.part1(), self.part2())
+        let now1 = Instant::now();
+        let p1 = self.part1();
+        let elapsed1 = now1.elapsed().as_millis();
+        let now2 = Instant::now();
+        let p2 = self.part2();
+        let elapsed2 = now2.elapsed().as_millis();
+        format!("Day1 (2021): ({}: {}ms, {}: {}ms)", p1, elapsed1, p2, elapsed2)
     }
 }
 
 #[cfg(test)]
-mod day1_testing {
+mod testing {
     use aoc_lib::{Day, aw};
 
-    fn new() -> super::Day {
-        aw!(super::Day::new()).unwrap()
-    }
-
     #[test]
-    fn p1_old() {
-        assert_eq!(1791, new().part1_old());
-    }
-
-    #[test]
-    fn p2_old() {
-        assert_eq!(1822, new().part2_old());
-    }
-
-    #[test]
-    fn p1() {
-        assert_eq!(1791, new().part1());
-    }
-
-    #[test]
-    fn p2() {
-        assert_eq!(1822, new().part2());
+    fn run() {
+        let day = aw!(super::Day::new()).unwrap();
+        assert_eq!(1791, day.part1_old());
+        assert_eq!(1822, day.part2_old());
+        assert_eq!(1791, day.part1());
+        assert_eq!(1822, day.part2());
     }
 }

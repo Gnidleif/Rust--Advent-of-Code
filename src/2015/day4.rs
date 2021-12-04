@@ -1,6 +1,7 @@
 use std::{
     result::Result,
     error::Error,
+    time::Instant,
 };
 use md5::{
     Md5,
@@ -60,26 +61,24 @@ impl aoc_lib::Day for Day {
     }
 
     fn fmt_result(&self) -> String {
-        format!("Day4 (2015): ({}, {})", self.part1(), self.part2())
+        let now1 = Instant::now();
+        let p1 = self.part1();
+        let elapsed1 = now1.elapsed().as_millis();
+        let now2 = Instant::now();
+        let p2 = self.part2();
+        let elapsed2 = now2.elapsed().as_millis();
+        format!("Day4 (2015): ({}: {}ms, {}: {}ms)", p1, elapsed1, p2, elapsed2)
     }
 }
 
+#[cfg(test)]
+mod testing {
+    use aoc_lib::{Day, aw};
 
-// #[cfg(test)]
-// mod d415_testing {
-//     use aoc_lib::{Day, aw};
-
-//     fn new() -> super::Day {
-//         aw!(super::Day::new()).unwrap()
-//     }
-
-//     #[test]
-//     fn p1() {
-//         assert_eq!(0, new().part1());
-//     }
-
-//     #[test]
-//     fn p2() {
-//         assert_eq!(0, new().part2());
-//     }
-// }
+    #[test]
+    fn run() {
+        let day = aw!(super::Day::new()).unwrap();
+        assert_eq!(254575, day.part1());
+        assert_eq!(1038736, day.part2());
+    }
+}
