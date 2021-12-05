@@ -87,8 +87,8 @@ impl Board {
 
 impl Day {
     #[allow(dead_code)]
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aoc_lib::create_input(2021, 4).await?;
+    pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
+        let content = aoc_lib::create_input(2021, 4, run_sample).await?;
 
         let mut lines = content.lines();
         let numbers: Vec<i32> = lines.next().unwrap().split(",").map(|num| num.parse::<i32>().unwrap()).collect();
@@ -180,7 +180,7 @@ mod testing {
 
     #[test]
     fn run() {
-        let day = aw!(super::Day::new()).unwrap();
+        let day = aw!(super::Day::new(false)).unwrap();
         assert_eq!(87456, day.part1());
         assert_eq!(15561, day.part2());
     }

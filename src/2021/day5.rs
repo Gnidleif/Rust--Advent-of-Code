@@ -40,8 +40,8 @@ struct Point {
 
 impl Day {
     #[allow(dead_code)]
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aoc_lib::create_input(2021, 5).await?;
+    pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
+        let content = aoc_lib::create_input(2021, 5, run_sample).await?;
 
         // create an iterator for mapping the input to points
         let points = content.lines().map(|line| line.split_whitespace().map(|x| x.to_string()).collect::<Vec<String>>())
@@ -129,7 +129,7 @@ mod testing {
 
     #[test]
     fn run() {
-        let day = aw!(super::Day::new()).unwrap();
+        let day = aw!(super::Day::new(false)).unwrap();
         assert_eq!(0, day.part1());
         assert_eq!(0, day.part2());
     }

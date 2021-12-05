@@ -23,8 +23,9 @@ enum Op {
 
 impl Day {
     #[allow(dead_code)]
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aoc_lib::create_input(2015, 7).await?;
+    pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
+        let content = aoc_lib::create_input(2015, 7, run_sample).await?;
+
         let rgx = Regex::new(r"([A-Z]+)").unwrap();
 
         let (cmds, charges) = content.lines().map(|line| {
@@ -120,7 +121,6 @@ impl aoc_lib::Day for Day {
                     },
                 };
                 if val > 0 {
-                    println!("{}: {}", key, val);
                     charges.insert(key.to_string(), (val + charges[key]) % u16::MAX);
                 }
                 val == 0
@@ -152,7 +152,7 @@ mod testing {
 
     #[test]
     fn run() {
-        let day = aw!(super::Day::new()).unwrap();
+        let day = aw!(super::Day::new(false)).unwrap();
         assert_eq!(3176, day.part1());
         assert_eq!(0, day.part2());
     }

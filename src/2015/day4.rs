@@ -14,8 +14,8 @@ pub struct Day {
 
 impl Day {
     #[allow(dead_code)]
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aoc_lib::create_input(2015, 4).await?;
+    pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
+        let content = aoc_lib::create_input(2015, 4, run_sample).await?;
 
         Ok(Day {
             input: content,
@@ -77,7 +77,7 @@ mod testing {
 
     #[test]
     fn run() {
-        let day = aw!(super::Day::new()).unwrap();
+        let day = aw!(super::Day::new(false)).unwrap();
         assert_eq!(254575, day.part1());
         assert_eq!(1038736, day.part2());
     }

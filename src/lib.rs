@@ -6,8 +6,8 @@ use std::{
 };
 use http::{header::{HeaderMap}, HeaderValue};
 
-pub async fn create_input(year: u16, day: u8) -> Result<String, Box<dyn Error>> {
-    let dir_path = format!("./input/{}", year);
+pub async fn create_input(year: u16, day: u8, run_sample: bool) -> Result<String, Box<dyn Error>> {
+    let dir_path = if !run_sample { format!("./input/{}", year) } else { format!("./sample/{}", year) };
     let file_path = format!("{}/{}.log", dir_path, day);
 
     if !Path::new(&file_path).is_file() {
@@ -15,10 +15,12 @@ pub async fn create_input(year: u16, day: u8) -> Result<String, Box<dyn Error>> 
             fs::create_dir_all(dir_path)?;
         }
 
-        let session = fs::read_to_string("session.log")?;
-        let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
-        let content = request_content(session.trim(), url).await?;
-        fs::write(&file_path, &content.trim())?;
+        if !run_sample {
+            let session = fs::read_to_string("session.log")?;
+            let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
+            let content = request_content(session.trim(), url).await?;
+            fs::write(&file_path, &content.trim())?;
+        }
     }
 
     Ok(fs::read_to_string(file_path)?.parse()?)

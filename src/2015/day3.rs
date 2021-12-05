@@ -18,8 +18,8 @@ enum Direction {
 
 impl Day {
     #[allow(dead_code)]
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aoc_lib::create_input(2015, 3).await?;
+    pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
+        let content = aoc_lib::create_input(2015, 3, run_sample).await?;
 
         Ok(Day {
             input: content.chars().map(|x| match x {
@@ -95,7 +95,7 @@ mod testing {
 
     #[test]
     fn run() {
-        let day = aw!(super::Day::new()).unwrap();
+        let day = aw!(super::Day::new(false)).unwrap();
         assert_eq!(2081, day.part1());
         assert_eq!(2341, day.part2());
     }

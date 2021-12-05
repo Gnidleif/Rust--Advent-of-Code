@@ -33,8 +33,9 @@ enum Command {
 
 impl Day {
     #[allow(dead_code)]
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aoc_lib::create_input(2015, 6).await?;
+    pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
+        let content = aoc_lib::create_input(2015, 6, run_sample).await?;
+
         let cmd_rgx = Regex::new(r"(on|off)").unwrap();
         let point_rgx = Regex::new(r"(\d+,\d+)").unwrap();
 
@@ -43,15 +44,15 @@ impl Day {
                 let points: Vec<Point> = point_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).map(|s| Point::from(s)).collect();
                 let cmd: String = cmd_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).collect();
                 (cmd, points)
-            }).fold(Vec::new(), |mut acc: Vec<Command>, (s, points)| {
+            })
+            .map(|(s, points)| {
                 let (p1, p2) = (points[0].clone(), points[1].clone());
-                acc.push(match &s[..] {
+                match &s[..] {
                     "on" => Command::TurnOn(p1, p2),
                     "off" => Command::TurnOff(p1, p2),
                     _ => Command::Toggle(p1, p2),
-                });
-                acc
-            }),
+                }
+            }).collect(),
         })
     }
 }
@@ -105,7 +106,7 @@ mod testing {
 
     #[test]
     fn run() {
-        let day = aw!(super::Day::new()).unwrap();
+        let day = aw!(super::Day::new(false)).unwrap();
         assert_eq!(543903, day.part1());
         assert_eq!(14687245, day.part2());
     }

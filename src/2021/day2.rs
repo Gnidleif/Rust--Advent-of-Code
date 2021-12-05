@@ -15,21 +15,21 @@ pub struct Day {
 }
 
 impl Day {
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let content = aoc_lib::create_input(2021, 2).await?;
+    pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
+        let content = aoc_lib::create_input(2021, 2, run_sample).await?;
 
         Ok(Day {
             input: content.lines()
-            .map(|x| x.split_whitespace().collect::<Vec<&str>>())
-            .map(|x| {
-                let n = x[1].parse().unwrap();
-                match x[0] {
-                    "forward" => Moves::Forward(n),
-                    "up" => Moves::Up(n),
-                    "down" => Moves::Down(n),
-                    _ => unreachable!(),
-                }
-            }).collect(),
+                .map(|x| x.split_whitespace().collect::<Vec<&str>>())
+                .map(|x| {
+                    let n = x[1].parse().unwrap();
+                    match x[0] {
+                        "forward" => Moves::Forward(n),
+                        "up" => Moves::Up(n),
+                        "down" => Moves::Down(n),
+                        _ => unreachable!(),
+                    }
+                }).collect(),
         })
     }
 
@@ -106,7 +106,7 @@ mod testing {
 
     #[test]
     fn run() {
-        let day = aw!(super::Day::new()).unwrap();
+        let day = aw!(super::Day::new(false)).unwrap();
         assert_eq!(1635930, day.part1_old());
         assert_eq!(1781819478, day.part2_old());
         assert_eq!(1635930, day.part1());
