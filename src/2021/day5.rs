@@ -65,12 +65,10 @@ impl Day {
 
     fn create_range(start: usize, end: usize) -> Range {
         if start < end {
-            let range = start..=end;
-            Range::Forward(range)
+            Range::Forward(start..=end)
         }
         else {
-            let range = end..=start;
-            Range::Backwards(range.rev())
+            Range::Backwards((end..=start).rev())
         }
     }
 
@@ -79,12 +77,12 @@ impl Day {
         let yr = Day::create_range(p1.y, p2.y);
         
         xr.zip_longest(yr).map(|i| match i {
-            Both(x, y) => (x, y),
-            Left(x) => (x, p1.y),
-            Right(y) => (p1.x, y),
-        }).map(|(x, y)| { 
-            (y * self.width) + x}
-        ).collect::<Vec<_>>()
+                Both(x, y) => (x, y),
+                Left(x) => (x, p1.y),
+                Right(y) => (p1.x, y),
+            }).map(|(x, y)| { 
+                (y * self.width) + x}
+            ).collect::<Vec<_>>()
     }
 }
 
@@ -103,7 +101,6 @@ impl aoc_lib::Day for Day {
 
     fn part2(&self) -> i32 {
         let mut board = vec![0; self.width * self.height];
-        // iterate over every instruction
         for (p1, p2) in self.input.iter() {
             let indices = self.indices_from_points(p1, p2);
             for i in indices.iter() {
