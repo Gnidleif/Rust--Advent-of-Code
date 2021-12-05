@@ -17,10 +17,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // Box::new(_2015::day6::Day::new().await?),
         // Box::new(_2015::day7::Day::new().await?),
 
-        Box::new(_2021::day1::Day::new().await?),
-        Box::new(_2021::day2::Day::new().await?),
-        Box::new(_2021::day3::Day::new().await?),
-        Box::new(_2021::day4::Day::new().await?),
+        // Box::new(_2021::day1::Day::new().await?),
+        // Box::new(_2021::day2::Day::new().await?),
+        // Box::new(_2021::day3::Day::new().await?),
+        // Box::new(_2021::day4::Day::new().await?),
+        Box::new(_2021::day5::Day::new().await?),
     ];
 
     for day in days.iter() {
