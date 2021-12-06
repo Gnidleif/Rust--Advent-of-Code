@@ -44,7 +44,7 @@ impl Day {
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> usize {
         self.input.iter()
         .fold(vec![(0, 0)], |mut acc, dir| {
             acc.push(Day::fold_helper(&acc, dir));
@@ -54,10 +54,10 @@ impl aoc_lib::Day for Day {
         .fold(HashSet::new(), |mut acc, point| {
             acc.insert(point);
             acc
-        }).len() as i32
+        }).len()
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         self.input.iter()
             .step_by(2)
             .fold(vec![(0, 0)], |mut acc, dir| {
@@ -75,7 +75,7 @@ impl aoc_lib::Day for Day {
                     acc.insert(point);
                     acc
                 })
-                .len() as i32
+                .len()
     }
 
     fn fmt_result(&self) -> String {

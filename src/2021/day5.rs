@@ -87,7 +87,7 @@ impl Day {
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> usize {
         let mut board = vec![0; self.width * self.height];
         for (p1, p2) in self.input.iter().filter(|(p1, p2)| p1.x == p2.x || p1.y == p2.y) {
             let indices = self.indices_from_points(p1, p2);
@@ -96,10 +96,10 @@ impl aoc_lib::Day for Day {
             }
         }
 
-        board.iter().filter(|v| **v >= 2).count() as i32
+        board.iter().filter(|v| **v >= 2).count()
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         let mut board = vec![0; self.width * self.height];
         for (p1, p2) in self.input.iter() {
             let indices = self.indices_from_points(p1, p2);
@@ -108,7 +108,7 @@ impl aoc_lib::Day for Day {
             }
         }
 
-        board.iter().filter(|v| **v >= 2).count() as i32
+        board.iter().filter(|v| **v >= 2).count()
     }
 
     fn fmt_result(&self) -> String {

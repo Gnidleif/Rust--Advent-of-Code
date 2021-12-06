@@ -4,7 +4,7 @@ use std::{
     time::Instant,
 };
 
-struct Dimension(i32, i32, i32);
+struct Dimension(usize, usize, usize);
 
 pub struct Day {
     input: Vec<Dimension>,
@@ -17,7 +17,7 @@ impl Day {
 
         Ok(Day {
             input: content.lines()
-                .map(|x| x.split("x").map(|y| y.parse::<i32>().unwrap()).collect::<Vec<i32>>())
+                .map(|x| x.split("x").map(|y| y.parse().unwrap()).collect::<Vec<_>>())
                 .map(|x| Dimension(x[0], x[1], x[2]))
                 .collect(),
         })
@@ -25,18 +25,18 @@ impl Day {
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> usize {
         self.input.iter()
         .map(|Dimension(l, w, h)| vec![l * w, w * h, h * l])
         .fold(0, |acc, areas| {
-            let smallest: i32 = *areas.iter().min().unwrap();
-            let total: i32 = areas.iter().sum();
+            let smallest = *areas.iter().min().unwrap();
+            let total: usize = areas.iter().sum();
 
             acc + (2 * total) + smallest
         })
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         self.input.iter()
         .map(|Dimension(l, w, h)| {
             let mut smallest = vec![l, w, h];

@@ -28,11 +28,11 @@ impl Day {
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
-        self.input.iter().sum::<i32>()
+    fn part1(&self) -> usize {
+        self.input.iter().sum::<i32>() as usize
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         let (idx, _) = self.input.iter()
             .enumerate()
             .fold_while((0, 0), |acc, (i, x)| 
@@ -42,8 +42,8 @@ impl aoc_lib::Day for Day {
                 else {
                     Continue((i, acc.1 + x))
                 }).into_inner();
-
-        (idx + 1) as i32
+        
+        idx + 1
     }
 
     fn fmt_result(&self) -> String {

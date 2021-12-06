@@ -9,6 +9,7 @@ pub struct Day {
 }
 
 impl Day {
+    #[allow(dead_code)]
     pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
         let content = aoc_lib::create_input(2021, 1, run_sample).await?;
 
@@ -46,7 +47,7 @@ impl Day {
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> usize {
         self.input
             .iter()
             .zip(self.input.iter().skip(1))
@@ -56,7 +57,7 @@ impl aoc_lib::Day for Day {
             .unwrap()
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         self.input
             .windows(4)
             .filter(|w| w[3] > w[0])

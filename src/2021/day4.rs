@@ -13,12 +13,12 @@ use itertools::{
 
 pub struct Day {
     input: Vec<Board>,
-    numbers: Vec<i32>,
+    numbers: Vec<usize>,
 }
 
 #[derive(Clone, Debug)]
 struct Cell {
-    num: i32,
+    num: usize,
     done: bool, 
 }
 
@@ -37,7 +37,7 @@ impl Board {
             matrix: numbers.iter()
                 .fold(Vec::new(), |mut acc, line| {
                     line.split_whitespace().map(|s| Cell {
-                        num: s.parse::<i32>().unwrap(),
+                        num: s.parse::<usize>().unwrap(),
                         done: false,
                     }).for_each(|x| acc.push(x));
                     acc
@@ -49,7 +49,7 @@ impl Board {
         v.iter().filter(|x| x.done).count() == v.len()
     }
 
-    fn check_rows(&self) -> i32 {
+    fn check_rows(&self) -> usize {
         (0..self.matrix.len()).step_by(self.width).fold_while(0, |_, i| {
             let row = &self.matrix[i..i+self.width];
             if Board::check_slice(row) {
@@ -61,7 +61,7 @@ impl Board {
         }).into_inner()
     }
 
-    fn check_cols(&self) -> i32 {
+    fn check_cols(&self) -> usize {
         (0..self.matrix.len() / self.height).fold_while(0, |_, i| {
             let idx: Vec<usize> = (0..self.matrix.len()).step_by(self.height).map(|j| i + j).collect();
             let column: &[Cell] = &idx.iter().fold(Vec::new(), |mut acc, j| {
@@ -77,10 +77,10 @@ impl Board {
         }).into_inner()
     }
 
-    fn index_of(&self, num: &i32) -> i32 {
+    fn index_of(&self, num: &usize) -> (usize, bool) {
         match self.matrix.iter().enumerate().find(|(_, c)| c.num == *num) {
-            Some((i, _)) => i as i32,
-            None => -1,
+            Some((i, _)) => (i, true),
+            None => (0, false),
         }
     }
 }
@@ -91,7 +91,7 @@ impl Day {
         let content = aoc_lib::create_input(2021, 4, run_sample).await?;
 
         let mut lines = content.lines();
-        let numbers: Vec<i32> = lines.next().unwrap().split(",").map(|num| num.parse::<i32>().unwrap()).collect();
+        let numbers: Vec<usize> = lines.next().unwrap().split(",").map(|num| num.parse().unwrap()).collect();
         let boards: Vec<String> = lines.filter(|line| line.len() > 0).map(|line| line.to_string()).collect();
 
         let input = boards.iter().enumerate().step_by(5).fold(Vec::new(), |mut acc: Vec<Board>, (i, _)| {
@@ -107,15 +107,15 @@ impl Day {
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> usize {
         let mut boards = self.input.clone();
         for num in self.numbers.iter() {
             for i in 0..boards.len() {
-                let j = boards[i].index_of(&num);
-                if j == -1 {
+                let (j, exists) = boards[i].index_of(&num);
+                if !exists {
                     continue;
                 }
-                boards[i].matrix[j as usize].done = true;
+                boards[i].matrix[j].done = true;
                 let s = boards[i].check_rows();
                 if s > 0 {
                     return s * num;
@@ -129,7 +129,7 @@ impl aoc_lib::Day for Day {
         0
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         let mut result = 0;
         let mut windices = vec![false; self.input.len()];
         let mut boards = self.input.clone();
@@ -138,11 +138,11 @@ impl aoc_lib::Day for Day {
                 if windices[i] {
                     continue;
                 }
-                let j = boards[i].index_of(&num);
-                if j == -1 {
+                let (j, exists) = boards[i].index_of(&num);
+                if !exists {
                     continue;
                 }
-                boards[i].matrix[j as usize].done = true;
+                boards[i].matrix[j].done = true;
                 let s = boards[i].check_rows();
                 if s > 0 {
                     result = s * num;

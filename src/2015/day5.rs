@@ -21,7 +21,7 @@ impl Day {
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> usize {
         vec![
             (Regex::new(r"ab|cd|pq|xy").unwrap(), false),
             (Regex::new(r"(\w)\1").unwrap(), true),
@@ -29,17 +29,17 @@ impl aoc_lib::Day for Day {
         ].iter().fold(self.input.clone(), |mut acc, (rgx, expected)| {
             acc.retain(|line| rgx.find(line).is_some() == *expected);
             acc
-        }).len() as i32
+        }).len()
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         vec![
             Regex::new(r"(\w\w).*\1").unwrap(),
             Regex::new(r"(\w)\w\1").unwrap(),
         ].iter().fold(self.input.clone(), |mut acc, rgx| {
             acc.retain(|line| rgx.find(line).is_some());
             acc
-        }).len() as i32
+        }).len()
     }
 
     fn fmt_result(&self) -> String {

@@ -63,7 +63,7 @@ impl Day {
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> usize {
         let mut charges = self.map.clone();
         let mut cmds = self.input.clone();
         let mut len_check = 0;
@@ -130,7 +130,7 @@ impl aoc_lib::Day for Day {
         0
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         0
     }
 

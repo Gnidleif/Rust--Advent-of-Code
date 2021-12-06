@@ -6,7 +6,10 @@ use std::{
 use onig::Regex;
 
 pub struct Day {
-    input: Vec<Command>,
+    width: usize,
+    height: usize,
+    commands: Vec<Command>,
+    points: Vec<(Point, Point)>,
 }
 
 #[derive(Clone)]
@@ -26,66 +29,72 @@ impl Point {
 }
 
 enum Command {
-    TurnOn(Point, Point),
-    Toggle(Point, Point),
-    TurnOff(Point, Point),
+    TurnOn,
+    Toggle,
+    TurnOff,
 }
 
 impl Day {
     #[allow(dead_code)]
     pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
         let content = aoc_lib::create_input(2015, 6, run_sample).await?;
-
         let cmd_rgx = Regex::new(r"(on|off)").unwrap();
         let point_rgx = Regex::new(r"(\d+,\d+)").unwrap();
 
+        let cmds: Vec<Command> = content.lines().map(|line| {
+            cmd_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).collect::<String>()
+        }).map(|cmd| match &cmd[..] {
+            "on" => Command::TurnOn,
+            "off" => Command::TurnOff,
+            _ => Command::Toggle,
+        }).collect();
+
+        let pts: Vec<(Point, Point)> = content.lines().map(|line| {
+            point_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).map(|s| Point::from(s)).collect::<Vec<Point>>()
+        }).map(|p| (p[0].clone(), p[1].clone())).collect();
+
         Ok(Day {
-            input: content.lines().map(|line| {
-                let points: Vec<Point> = point_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).map(|s| Point::from(s)).collect();
-                let cmd: String = cmd_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).collect();
-                (cmd, points)
-            })
-            .map(|(s, points)| {
-                let (p1, p2) = (points[0].clone(), points[1].clone());
-                match &s[..] {
-                    "on" => Command::TurnOn(p1, p2),
-                    "off" => Command::TurnOff(p1, p2),
-                    _ => Command::Toggle(p1, p2),
-                }
-            }).collect(),
+            width: 1000,
+            height: 1000,
+            commands: cmds,
+            points: pts,
         })
     }
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
-        self.input.iter()
-            .fold(vec![vec![0; 1000]; 1000], |mut acc, cmd| {
-                match cmd {
-                    Command::TurnOn(p1, p2) => (p1.x..=p2.x).for_each(|x| 
-                        (p1.y..=p2.y).for_each(|y| acc[x][y] = 1)),
-                    Command::TurnOff(p1, p2) => (p1.x..=p2.x).for_each(|x| 
-                        (p1.y..=p2.y).for_each(|y| acc[x][y] = 0)),
-                    Command::Toggle(p1, p2) => (p1.x..=p2.x).for_each(|x| 
-                        (p1.y..=p2.y).for_each(|y| acc[x][y] = if acc[x][y] == 0 { 1 } else { 0 })),
-                };
-                acc
-            }).iter().flatten().sum::<i32>()
+    fn part1(&self) -> usize {
+        let mut board = vec![0; self.width * self.height];
+        for (c, (p1, p2)) in self.commands.iter().zip(self.points.clone()) {
+            for i in (p1.x..=p2.x).map(|x| {
+                (p1.y..=p2.y).map(move |y| (y * self.width) + x)
+                }).flatten() {
+                match c {
+                    Command::TurnOn => board[i] = 1,
+                    Command::TurnOff => board[i] = 0,
+                    Command::Toggle => board[i] = if board[i] == 0 { 1 } else { 0 },
+                }
+            }
+        }
+
+        board.iter().sum()
     }
 
-    fn part2(&self) -> i32 {
-        self.input.iter()
-            .fold(vec![vec![0; 1000]; 1000], |mut acc, cmd| {
-                match cmd {
-                    Command::TurnOn(p1, p2) => (p1.x..=p2.x).for_each(|x| 
-                        (p1.y..=p2.y).for_each(|y| acc[x][y] += 1)),
-                    Command::TurnOff(p1, p2) => (p1.x..=p2.x).for_each(|x| 
-                        (p1.y..=p2.y).for_each(|y| if acc[x][y] > 0 { acc[x][y] -= 1 })),
-                    Command::Toggle(p1, p2) => (p1.x..=p2.x).for_each(|x| 
-                        (p1.y..=p2.y).for_each(|y| acc[x][y] += 2)),
-                };
-                acc
-            }).iter().flatten().sum::<i32>()
+    fn part2(&self) -> usize {
+        let mut board = vec![0; self.width * self.height];
+        for (c, (p1, p2)) in self.commands.iter().zip(self.points.clone()) {
+            for i in (p1.x..=p2.x).map(|x| {
+                (p1.y..=p2.y).map(move |y| (y * self.width) + x)
+                }).flatten() {
+                match c {
+                    Command::TurnOn => board[i] += 1,
+                    Command::TurnOff => if board[i] > 0 { board[i] -= 1 },
+                    Command::Toggle => board[i] += 2,
+                }
+            }
+        }
+
+        board.iter().sum()
     }
 
     fn fmt_result(&self) -> String {

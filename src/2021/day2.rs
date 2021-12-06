@@ -15,6 +15,7 @@ pub struct Day {
 }
 
 impl Day {
+    #[allow(dead_code)]
     pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
         let content = aoc_lib::create_input(2021, 2, run_sample).await?;
 
@@ -34,7 +35,7 @@ impl Day {
     }
 
     #[allow(dead_code)]
-    fn part1_old(&self) -> i32 {
+    fn part1_old(&self) -> usize {
         let mut point = (0, 0);
         for mv in self.input.iter() {
             match mv {
@@ -44,11 +45,11 @@ impl Day {
             };
         }
 
-        point.0 * point.1
+        (point.0 * point.1) as usize
     }
 
     #[allow(dead_code)]
-    fn part2_old(&self) -> i32 {
+    fn part2_old(&self) -> usize {
         let mut aim = 0;
         let mut point = (0, 0);
         for mv in self.input.iter() {
@@ -62,12 +63,12 @@ impl Day {
             };
         }
 
-        point.0 * point.1
+        (point.0 * point.1) as usize
     }
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> usize {
         let (x, y) = self.input.iter()
             .fold((0, 0), |(x, y), mv| match mv {
                 Moves::Forward(n) => (x + n, y),
@@ -75,10 +76,10 @@ impl aoc_lib::Day for Day {
                 Moves::Down(n) => (x, y + n),
             });
         
-        x * y
+        (x * y) as usize
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         let (x, y, _) = self.input.iter()
             .fold((0, 0, 0), |(x, y, a), mv| match mv {
                 Moves::Forward(n) => (x + n, y + a * n, a),
@@ -86,7 +87,7 @@ impl aoc_lib::Day for Day {
                 Moves::Down(n) => (x, y, a + n),
             });
 
-        x * y
+        (x * y) as usize
     }
     
     fn fmt_result(&self) -> String {

@@ -24,8 +24,8 @@ impl Day {
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
-        let mut i: i32 = 0;
+    fn part1(&self) -> usize {
+        let mut i = 0;
         'outer: loop {
             let s = format!("{}{}", self.input, i);
             let hash = Md5::digest(s.as_bytes());
@@ -42,8 +42,8 @@ impl aoc_lib::Day for Day {
         }
     }
 
-    fn part2(&self) -> i32 {
-        let mut i: i32 = 0;
+    fn part2(&self) -> usize {
+        let mut i = 0;
         'outer: loop {
             let s = format!("{}{}", self.input, i);
             let hash = Md5::digest(s.as_bytes());

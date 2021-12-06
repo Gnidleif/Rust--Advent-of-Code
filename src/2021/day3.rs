@@ -30,7 +30,7 @@ impl Day {
         })
     }
 
-    fn solve_rating(lines: &Vec<Vec<i32>>, common: bool) -> i32 {
+    fn solve_rating(lines: &Vec<Vec<i32>>, common: bool) -> usize {
         let mut pos = 0;
         let mut values = lines.clone();
         while values.len() > 1 {
@@ -43,17 +43,14 @@ impl Day {
             }
             pos += 1;
         }
-        let s_val = values[0].iter().fold(String::new(), |mut acc, x| {
-            acc.push_str(&x.to_string());
-            acc
-        });
         
-        i32::from_str_radix(&s_val, 2).unwrap()
+        let s_val: String = values[0].iter().map(|x| x.to_string()).collect();
+        usize::from_str_radix(&s_val, 2).unwrap()
     }
 }
 
 impl aoc_lib::Day for Day {
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> usize {
         let result = self.input.iter()
             .fold(vec![0; self.width], |mut acc, line| {
                 line.iter().enumerate().for_each(|(i, &b)| acc[i] += b);
@@ -70,10 +67,10 @@ impl aoc_lib::Day for Day {
                 s
             });
 
-        i32::from_str_radix(&result[0], 2).unwrap() * i32::from_str_radix(&result[1], 2).unwrap()
+        usize::from_str_radix(&result[0], 2).unwrap() * usize::from_str_radix(&result[1], 2).unwrap()
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> usize {
         Day::solve_rating(&self.input, true) * Day::solve_rating(&self.input, false)
     }
 
