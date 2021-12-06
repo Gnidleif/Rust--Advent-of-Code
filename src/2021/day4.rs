@@ -16,13 +16,13 @@ pub struct Day {
     numbers: Vec<usize>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 struct Cell {
     num: usize,
     done: bool, 
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 struct Board {
     width: usize,
     height: usize,

@@ -51,6 +51,8 @@ async fn request_content(session: &str, url: String) -> Result<String, Box<dyn E
     }
 }
 
+// Day definitions
+
 #[macro_export]
 macro_rules! aw {
     ($e:expr) => {
@@ -62,4 +64,58 @@ pub trait Day {
     fn part1(&self) -> usize;
     fn part2(&self) -> usize;
     fn fmt_result(&self) -> String;
+}
+
+use std::{
+    ops::RangeInclusive,
+    iter::Rev,
+};
+
+pub enum Range {
+    Forward(RangeInclusive<usize>),
+    Backwards(Rev<RangeInclusive<usize>>),
+}
+
+impl Range {
+    pub fn from(start: usize, end: usize) -> Self {
+        if start < end {
+            Range::Forward(start..=end)
+        }
+        else {
+            Range::Backwards((end..=start).rev())
+        }
+    }
+}
+
+impl Iterator for Range {
+    type Item = usize;
+    fn next(&mut self) -> Option<usize> {
+        match self {
+            Range::Forward(range) => range.next(),
+            Range::Backwards(range) => range.next(),
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct Point {
+    pub x: usize,
+    pub y: usize,
+}
+
+use itertools::{
+    Itertools,
+    EitherOrBoth::{Both, Left, Right},
+};
+
+pub fn indices_from_points(p1: &Point, p2: &Point, w: &usize) -> Vec<usize> {
+    let xr = Range::from(p1.x, p2.x);
+    let yr = Range::from(p1.y, p2.y);
+
+    xr.zip_longest(yr).map(|i| match i {
+        Both(x, y) => (x, y),
+        Left(x) => (x, p1.y),
+        Right(y) => (p1.x, y),
+    }).map(|(x, y)| (y * w) + x)
+        .collect::<Vec<_>>()
 }

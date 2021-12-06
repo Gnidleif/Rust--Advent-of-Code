@@ -11,31 +11,15 @@ use itertools::{
         Both,
     },
 };
+use aoc_lib::{
+    Point,
+    Range,
+};
 
 pub struct Day {
     width: usize,
     height: usize,
     input: Vec<(Point, Point)>,
-}
-
-enum Range {
-    Forward(std::ops::RangeInclusive<usize>),
-    Backwards(std::iter::Rev<std::ops::RangeInclusive<usize>>),
-}
-
-impl Iterator for Range {
-    type Item = usize;
-    fn next(&mut self) -> Option<usize> {
-        match self {
-            Range::Forward(range) => range.next(),
-            Range::Backwards(range) => range.next(),
-        }
-    }
-}
-
-struct Point {
-    x: usize,
-    y: usize,
 }
 
 impl Day {
@@ -62,35 +46,13 @@ impl Day {
             input: points.collect::<Vec<_>>(),
         })
     }
-
-    fn create_range(start: usize, end: usize) -> Range {
-        if start < end {
-            Range::Forward(start..=end)
-        }
-        else {
-            Range::Backwards((end..=start).rev())
-        }
-    }
-
-    fn indices_from_points(&self, p1: &Point, p2: &Point) -> Vec<usize> {
-        let xr = Day::create_range(p1.x, p2.x);
-        let yr = Day::create_range(p1.y, p2.y);
-        
-        xr.zip_longest(yr).map(|i| match i {
-                Both(x, y) => (x, y),
-                Left(x) => (x, p1.y),
-                Right(y) => (p1.x, y),
-            }).map(|(x, y)| { 
-                (y * self.width) + x}
-            ).collect::<Vec<_>>()
-    }
 }
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
         let mut board = vec![0; self.width * self.height];
         for (p1, p2) in self.input.iter().filter(|(p1, p2)| p1.x == p2.x || p1.y == p2.y) {
-            let indices = self.indices_from_points(p1, p2);
+            let indices = aoc_lib::indices_from_points(p1, p2, &self.width);
             for i in indices.iter() {
                 board[*i] += 1;
             }
@@ -102,7 +64,7 @@ impl aoc_lib::Day for Day {
     fn part2(&self) -> usize {
         let mut board = vec![0; self.width * self.height];
         for (p1, p2) in self.input.iter() {
-            let indices = self.indices_from_points(p1, p2);
+            let indices = aoc_lib::indices_from_points(p1, p2, &self.width);
             for i in indices.iter() {
                 board[*i] += 1;
             }

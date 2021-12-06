@@ -53,8 +53,6 @@ impl aoc_lib::Day for Day {
             .zip(self.input.iter().skip(1))
             .filter(|(a, b)| b > a)
             .count()
-            .try_into()
-            .unwrap()
     }
 
     fn part2(&self) -> usize {
@@ -62,8 +60,6 @@ impl aoc_lib::Day for Day {
             .windows(4)
             .filter(|w| w[3] > w[0])
             .count()
-            .try_into()
-            .unwrap()
     }
 
     fn fmt_result(&self) -> String {
