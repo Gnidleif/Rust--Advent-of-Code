@@ -27,6 +27,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         Box::new(_2021::day4::Day::new(run_sample).await?),
         Box::new(_2021::day5::Day::new(run_sample).await?),
         Box::new(_2021::day6::Day::new(run_sample).await?),
+        Box::new(_2021::day7::Day::new(run_sample).await?),
     ];
 
     for day in days.iter() {

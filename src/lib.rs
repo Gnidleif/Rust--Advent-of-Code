@@ -112,12 +112,11 @@ use itertools::{
     EitherOrBoth::{Both, Left, Right},
 };
 
-pub fn indices_from_points(p1: &Point, p2: &Point, w: &usize) -> Vec<usize> {
-    Range::from(p1.x, p2.x).zip_longest(Range::from(p1.y, p2.y))
+pub fn line_between_points<'a>(p1: &'a Point, p2: &'a Point, w: &'a usize) -> Box<dyn Iterator<Item=usize> + 'a> {
+    Box::new(Range::from(p1.x, p2.x).zip_longest(Range::from(p1.y, p2.y))
         .map(|i| match i {
             Both(x, y) => (x, y),
             Left(x) => (x, p1.y),
             Right(y) => (p1.x, y),
-        }).map(|(x, y)| (y * w) + x)
-            .collect::<Vec<_>>()
+        }).map(move |(x, y)| (y * w) + x))
 }

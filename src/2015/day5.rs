@@ -45,11 +45,11 @@ impl aoc_lib::Day for Day {
     fn fmt_result(&self) -> String {
         let now1 = Instant::now();
         let p1 = self.part1();
-        let elapsed1 = now1.elapsed().as_millis();
+        let elapsed1 = now1.elapsed().as_micros();
         let now2 = Instant::now();
         let p2 = self.part2();
-        let elapsed2 = now2.elapsed().as_millis();
-        format!("Day5 (2015): ({}: {}ms, {}: {}ms)", p1, elapsed1, p2, elapsed2)
+        let elapsed2 = now2.elapsed().as_micros();
+        format!("Day5 (2015): ({}: {}μs, {}: {}μs)", p1, elapsed1, p2, elapsed2)
     }
 }
 

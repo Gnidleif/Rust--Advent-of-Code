@@ -3,6 +3,7 @@ use std::{
     error::Error,
     time::Instant,
 };
+use aoc_lib::Point;
 use onig::Regex;
 
 pub struct Day {
@@ -10,22 +11,6 @@ pub struct Day {
     height: usize,
     commands: Vec<Command>,
     points: Vec<(Point, Point)>,
-}
-
-#[derive(Clone)]
-struct Point {
-    x: usize,
-    y: usize,
-}
-
-impl Point {
-    fn from(s: String) -> Self {
-        let points: Vec<String> = s.split(",").map(|x| x.to_string()).collect();
-        Point {
-            x: points[0].parse().unwrap(),
-            y: points[1].parse().unwrap(),
-        }
-    }
 }
 
 enum Command {
@@ -42,16 +27,22 @@ impl Day {
         let point_rgx = Regex::new(r"(\d+,\d+)").unwrap();
 
         let cmds: Vec<Command> = content.lines().map(|line| {
-            cmd_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).collect::<String>()
-        }).map(|cmd| match &cmd[..] {
-            "on" => Command::TurnOn,
-            "off" => Command::TurnOff,
-            _ => Command::Toggle,
-        }).collect();
+                cmd_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).collect::<String>()
+            }).map(|cmd| match &cmd[..] {
+                "on" => Command::TurnOn,
+                "off" => Command::TurnOff,
+                _ => Command::Toggle,
+            }).collect();
 
         let pts: Vec<(Point, Point)> = content.lines().map(|line| {
-            point_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).map(|s| Point::from(s)).collect::<Vec<Point>>()
-        }).map(|p| (p[0].clone(), p[1].clone())).collect();
+            point_rgx.find_iter(line).map(|pos| line[pos.0..pos.1].to_string()).map(|s| {
+                let p: Vec<usize> = s.split(",").map(|x| x.parse::<usize>().unwrap()).collect();
+                Point {
+                    x: p[0],
+                    y: p[1],
+                }
+            }).collect::<Vec<Point>>()
+            }).map(|p| (p[0].clone(), p[1].clone())).collect();
 
         Ok(Day {
             width: 1000,
@@ -100,11 +91,11 @@ impl aoc_lib::Day for Day {
     fn fmt_result(&self) -> String {
         let now1 = Instant::now();
         let p1 = self.part1();
-        let elapsed1 = now1.elapsed().as_millis();
+        let elapsed1 = now1.elapsed().as_micros();
         let now2 = Instant::now();
         let p2 = self.part2();
-        let elapsed2 = now2.elapsed().as_millis();
-        format!("Day6 (2015): ({}: {}ms, {}: {}ms)", p1, elapsed1, p2, elapsed2)
+        let elapsed2 = now2.elapsed().as_micros();
+        format!("Day6 (2015): ({}: {}μs, {}: {}μs)", p1, elapsed1, p2, elapsed2)
     }
 }
 

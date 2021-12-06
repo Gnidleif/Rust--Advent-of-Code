@@ -23,11 +23,8 @@ impl Day {
     fn iterate_days(&self, num_days: usize) -> usize {
         let mut days = self.input.clone();
         for _ in 0..num_days {
-            let zeroes = days[0];
-            days[0] = 0;
             days.rotate_left(1);
-            days[6] += zeroes;
-            days[8] = zeroes;
+            days[6] += days[8];
         }
 
         days.iter().sum()
@@ -46,11 +43,11 @@ impl aoc_lib::Day for Day {
     fn fmt_result(&self) -> String {
         let now1 = Instant::now();
         let p1 = self.part1();
-        let elapsed1 = now1.elapsed().as_millis();
+        let elapsed1 = now1.elapsed().as_micros();
         let now2 = Instant::now();
         let p2 = self.part2();
-        let elapsed2 = now2.elapsed().as_millis();
-        format!("Day6 (2021): ({}: {}ms, {}: {}ms)", p1, elapsed1, p2, elapsed2)
+        let elapsed2 = now2.elapsed().as_micros();
+        format!("Day6 (2021): ({}: {}μs, {}: {}μs)", p1, elapsed1, p2, elapsed2)
     }
 }
 

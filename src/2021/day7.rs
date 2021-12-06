@@ -11,7 +11,7 @@ pub struct Day {
 impl Day {
     #[allow(dead_code)]
     pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
-        let content = aoc_lib::create_input(2015, 1, run_sample).await?;
+        let content = aoc_lib::create_input(2021, 7, run_sample).await?;
 
         Ok(Day {
 
@@ -35,7 +35,7 @@ impl aoc_lib::Day for Day {
         let now2 = Instant::now();
         let p2 = self.part2();
         let elapsed2 = now2.elapsed().as_micros();
-        format!("Day#### (2021): ({}: {}μs, {}: {}μs)", p1, elapsed1, p2, elapsed2)
+        format!("Day7 (2021): ({}: {}μs, {}: {}μs)", p1, elapsed1, p2, elapsed2)
     }
 }
 

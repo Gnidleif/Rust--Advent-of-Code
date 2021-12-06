@@ -5,3 +5,4 @@
 #[path = "day5.rs"] pub mod day5;
 #[path = "day6.rs"] pub mod day6;
 #[path = "day7.rs"] pub mod day7;
+// #[path = "day8.rs"] pub mod day8;

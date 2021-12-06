@@ -2,12 +2,12 @@ use std::{
     result::Result,
     error::Error,
     time::Instant,
+    collections::HashMap,
 };
 use aoc_lib::Point;
 
 pub struct Day {
     width: usize,
-    height: usize,
     input: Vec<(Point, Point)>,
 }
 
@@ -26,11 +26,9 @@ impl Day {
         
         // find width and height of the board by finding highest x and y of iterated points
         let w = points.clone().map(|p| std::cmp::max(p.0.x, p.1.x)).max().unwrap();
-        let h = points.clone().map(|p| std::cmp::max(p.1.y, p.1.y)).max().unwrap();
 
         Ok(Day {
             width: w + 1,
-            height: h + 1,
             // fold each iterated point into a vector
             input: points.collect::<Vec<_>>(),
         })
@@ -39,37 +37,39 @@ impl Day {
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
-        let mut board = vec![0; self.width * self.height];
-        for (p1, p2) in self.input.iter().filter(|(p1, p2)| p1.x == p2.x || p1.y == p2.y) {
-            let indices = aoc_lib::indices_from_points(p1, p2, &self.width);
-            for i in indices.iter() {
-                board[*i] += 1;
-            }
-        }
-
-        board.iter().filter(|v| **v >= 2).count()
+        self.input.iter().filter(|(p1, p2)| p1.x == p2.x || p1.y == p2.y)
+            .fold(HashMap::new(), |mut map: HashMap<usize, usize>, (p1, p2)| {
+                for i in aoc_lib::line_between_points(p1, p2, &self.width) {
+                    map.insert(i, match map.get(&i) {
+                        Some(n) => n + 1,
+                        None => 1,
+                    });
+                }
+                map
+            }).iter().map(|(_, v)| v).filter(|v| **v > 1).count()
     }
 
     fn part2(&self) -> usize {
-        let mut board = vec![0; self.width * self.height];
-        for (p1, p2) in self.input.iter() {
-            let indices = aoc_lib::indices_from_points(p1, p2, &self.width);
-            for i in indices.iter() {
-                board[*i] += 1;
-            }
-        }
-
-        board.iter().filter(|v| **v >= 2).count()
+        self.input.iter()
+            .fold(HashMap::new(), |mut map: HashMap<usize, usize>, (p1, p2)| {
+                for i in aoc_lib::line_between_points(p1, p2, &self.width) {
+                    map.insert(i, match map.get(&i) {
+                        Some(n) => n + 1,
+                        None => 1,
+                    });
+                }
+                map
+            }).iter().filter(|(_, v)| **v > 1).count()
     }
 
     fn fmt_result(&self) -> String {
         let now1 = Instant::now();
         let p1 = self.part1();
-        let elapsed1 = now1.elapsed().as_millis();
+        let elapsed1 = now1.elapsed().as_micros();
         let now2 = Instant::now();
         let p2 = self.part2();
-        let elapsed2 = now2.elapsed().as_millis();
-        format!("Day5 (2021): ({}: {}ms, {}: {}ms)", p1, elapsed1, p2, elapsed2)
+        let elapsed2 = now2.elapsed().as_micros();
+        format!("Day5 (2021): ({}: {}μs, {}: {}μs)", p1, elapsed1, p2, elapsed2)
     }
 }
 
