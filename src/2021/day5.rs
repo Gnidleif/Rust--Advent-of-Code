@@ -3,18 +3,7 @@ use std::{
     error::Error,
     time::Instant,
 };
-use itertools::{
-    Itertools,
-    EitherOrBoth::{
-        Left, 
-        Right, 
-        Both,
-    },
-};
-use aoc_lib::{
-    Point,
-    Range,
-};
+use aoc_lib::Point;
 
 pub struct Day {
     width: usize,

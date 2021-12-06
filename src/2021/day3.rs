@@ -21,12 +21,7 @@ impl Day {
         Ok(Day {
             height: h,
             width: w,
-            input: content.lines()
-                .map(|x| x.chars().map(|y| match y {
-                    '0' => 0,
-                    '1' => 1,
-                    _ => unreachable!(),
-                }).collect::<Vec<i32>>()).collect()
+            input: content.lines().map(|x| x.chars().map(|c| c.to_string().parse().unwrap()).collect()).collect(),
         })
     }
 

@@ -27,7 +27,7 @@ impl Day {
             days[0] = 0;
             days.rotate_left(1);
             days[6] += zeroes;
-            days[8] += zeroes;
+            days[8] = zeroes;
         }
 
         days.iter().sum()
