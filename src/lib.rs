@@ -14,13 +14,16 @@ pub async fn create_input(year: u16, day: u8, run_sample: bool) -> Result<String
         if !Path::new(&dir_path).is_dir() {
             fs::create_dir_all(dir_path)?;
         }
-
-        if !run_sample {
+        
+        let content = if !run_sample {
             let session = fs::read_to_string("session.log")?;
             let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
-            let content = request_content(session.trim(), url).await?;
-            fs::write(&file_path, &content.trim())?;
+            request_content(session.trim(), url).await?
         }
+        else {
+            String::from("")
+        };
+        fs::write(&file_path, &content.trim())?;
     }
 
     Ok(fs::read_to_string(file_path)?.parse()?)

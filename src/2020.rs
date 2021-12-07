@@ -1,0 +1,1 @@
+#[path = "2020/day1.rs"] pub mod day1;
