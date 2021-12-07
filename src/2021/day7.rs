@@ -3,9 +3,10 @@ use std::{
     error::Error,
     time::Instant,
 };
+use aoc_lib::Point;
 
 pub struct Day {
-
+    input: Vec<usize>,
 }
 
 impl Day {
@@ -14,13 +15,31 @@ impl Day {
         let content = aoc_lib::create_input(2021, 7, run_sample).await?;
 
         Ok(Day {
-
+            input: content.split(",")
+                .map(|x| x.parse().unwrap())
+                .collect(),
         })
     }
 }
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
+        let w = self.input.len();
+        let m = self.input.iter().fold(self.input.clone(), |mut acc, _| {
+            let mut cpy = acc.clone();
+            cpy.rotate_right(1);
+            acc.extend(cpy);
+            acc
+        });
+
+        for x in (0..m.len()).step_by(w) {
+            // let v1 = m[x];
+            println!("{:?}", &m[x..x+w]);
+            // for y in 1..w {
+            //     let v2 = m[(y * w) + x];
+            // }
+        }
+
         0
     }
 

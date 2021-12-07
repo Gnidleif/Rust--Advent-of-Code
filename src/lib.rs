@@ -101,7 +101,7 @@ impl Iterator for Range {
 
 // Points
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Point {
     pub x: usize,
     pub y: usize,
@@ -119,4 +119,8 @@ pub fn line_between_points<'a>(p1: &'a Point, p2: &'a Point, w: &'a usize) -> Bo
             Left(x) => (x, p1.y),
             Right(y) => (p1.x, y),
         }).map(move |(x, y)| (y * w) + x))
+}
+
+pub fn index_from_point(p: &Point, w: &usize) -> usize {
+    (p.y * w) + p.x
 }
