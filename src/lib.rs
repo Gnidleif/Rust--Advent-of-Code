@@ -51,7 +51,6 @@ async fn request_content(session: &str, url: String) -> Result<String, Box<dyn E
     }
 }
 
-// Day definitions
 
 #[macro_export]
 macro_rules! aw {
@@ -66,57 +65,83 @@ pub trait Day {
     fn fmt_result(&self) -> String;
 }
 
-// Range
-
-use std::{
-    ops::RangeInclusive,
-    iter::Rev,
-};
-
-pub enum Range {
-    Forward(RangeInclusive<usize>),
-    Backwards(Rev<RangeInclusive<usize>>),
-}
-
-impl Range {
-    pub fn from(start: usize, end: usize) -> Self {
-        if start < end {
-            Range::Forward(start..=end)
-        }
-        else {
-            Range::Backwards((end..=start).rev())
-        }
-    }
-}
-
-impl Iterator for Range {
-    type Item = usize;
-    fn next(&mut self) -> Option<usize> {
-        match self {
-            Range::Forward(range) => range.next(),
-            Range::Backwards(range) => range.next(),
-        }
-    }
-}
-
-// Points
-
 #[derive(Clone, Debug)]
 pub struct Point {
     pub x: usize,
     pub y: usize,
 }
 
-use itertools::{
-    Itertools,
-    EitherOrBoth::{Both, Left, Right},
-};
 
-pub fn line_between_points<'a>(p1: &'a Point, p2: &'a Point, w: &'a usize) -> Box<dyn Iterator<Item=usize> + 'a> {
-    Box::new(Range::from(p1.x, p2.x).zip_longest(Range::from(p1.y, p2.y))
-        .map(|i| match i {
-            Both(x, y) => (x, y),
-            Left(x) => (x, p1.y),
-            Right(y) => (p1.x, y),
-        }).map(move |(x, y)| (y * w) + x))
+pub mod iterators {
+    use super::Point;
+    use itertools::{
+        Itertools,
+        EitherOrBoth::{Both, Left, Right},
+    };
+    use std::{
+        ops::RangeInclusive,
+        iter::Rev,
+    };
+    
+    pub enum Range {
+        Forward(RangeInclusive<usize>),
+        Backwards(Rev<RangeInclusive<usize>>),
+    }
+    
+    impl Range {
+        pub fn from(start: usize, end: usize) -> Self {
+            if start < end {
+                Range::Forward(start..=end)
+            }
+            else {
+                Range::Backwards((end..=start).rev())
+            }
+        }
+    }
+    
+    impl Iterator for Range {
+        type Item = usize;
+        fn next(&mut self) -> Option<usize> {
+            match self {
+                Range::Forward(range) => range.next(),
+                Range::Backwards(range) => range.next(),
+            }
+        }
+    }
+
+    pub fn line_between_points<'a>(p1: &'a Point, p2: &'a Point, w: &'a usize) -> Box<dyn Iterator<Item=usize> + 'a> {
+        Box::new(Range::from(p1.x, p2.x).zip_longest(Range::from(p1.y, p2.y))
+            .map(|i| match i {
+                Both(x, y) => (x, y),
+                Left(x) => (x, p1.y),
+                Right(y) => (p1.x, y),
+            }).map(move |(x, y)| (y * w) + x))
+    }
+}
+
+pub mod algorithms {
+    use num_traits::PrimInt;
+    
+    pub fn binary_search<T: PrimInt>(v: &[T], target_fn: impl Fn(&[T], T) -> T) -> T {
+        let mut low = v.iter().min().unwrap().to_owned();
+        let mut high = v.iter().max().unwrap().to_owned();
+    
+        loop {
+            let middle = (low + high) >> 1;
+            let left = middle - T::one();
+            let right = middle + T::one();
+    
+            let cost = target_fn(v, middle);
+    
+            if target_fn(v, left) < cost {
+                high = left;
+            }
+            else if target_fn(v, right) < cost {
+                low = right;
+            }
+            else {
+                return cost;
+            }
+        }
+    }
 }

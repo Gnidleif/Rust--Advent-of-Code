@@ -20,3 +20,4 @@ tokio-test = "0.4.2"
 itertools = "0.10.1"
 md-5 = "0.9.1"
 onig = { version = "6", default-features = false }
+num-traits = "0.2"

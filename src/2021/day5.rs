@@ -4,7 +4,10 @@ use std::{
     time::Instant,
     collections::HashMap,
 };
-use aoc_lib::Point;
+use aoc_lib::{
+    Point,
+    iterators::line_between_points,
+};
 
 pub struct Day {
     width: usize,
@@ -39,7 +42,7 @@ impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
         self.input.iter().filter(|(p1, p2)| p1.x == p2.x || p1.y == p2.y)
             .fold(HashMap::new(), |mut map: HashMap<usize, usize>, (p1, p2)| {
-                for i in aoc_lib::line_between_points(p1, p2, &self.width) {
+                for i in line_between_points(p1, p2, &self.width) {
                     map.insert(i, match map.get(&i) {
                         Some(n) => n + 1,
                         None => 1,
@@ -52,7 +55,7 @@ impl aoc_lib::Day for Day {
     fn part2(&self) -> usize {
         self.input.iter()
             .fold(HashMap::new(), |mut map: HashMap<usize, usize>, (p1, p2)| {
-                for i in aoc_lib::line_between_points(p1, p2, &self.width) {
+                for i in line_between_points(p1, p2, &self.width) {
                     map.insert(i, match map.get(&i) {
                         Some(n) => n + 1,
                         None => 1,

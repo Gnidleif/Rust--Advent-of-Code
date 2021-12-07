@@ -4,12 +4,11 @@ use std::{
     time::Instant,
     ops::Sub,
 };
+use aoc_lib::algorithms;
 
 pub struct Day {
     input: Vec<i32>,
 }
-
-type ScoreFn = fn(&[i32], i32) -> i32;
 
 impl Day {
     #[allow(dead_code)]
@@ -23,49 +22,22 @@ impl Day {
             input: sorted,
         })
     }
-
-    fn binary_search(v: &[i32], calc_score: ScoreFn) -> i32 {
-        let mut low = v.iter().min().unwrap().to_owned();
-        let mut high = v.iter().max().unwrap().to_owned();
-        let mut min = i32::MAX;
-
-        while low <= high {
-            let middle = (low + high) / 2;
-            let left = middle - 1;
-            let right = middle + 1;
-
-            let cost = calc_score(v, middle);
-            if cost < min {
-                min = cost;
-            }
-
-            if calc_score(v, left) < cost {
-                high = left;
-            }
-            else if calc_score(v, right) < cost {
-                low = right;
-            }
-            else {
-                break;
-            }
-        }
-
-        min
-    }
 }
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
-        let calc_score: ScoreFn = move |pos: &[i32], target: i32| pos.iter().map(|p| p.sub(target).abs()).sum();
-        Day::binary_search(&self.input[..], calc_score) as usize
+        let calc_score = |pos: &[i32], target: i32| pos.iter()
+            .map(|p| p.sub(target).abs()).sum();
+
+        algorithms::binary_search(&self.input[..], calc_score) as usize
     }
 
     fn part2(&self) -> usize {
-        let calc_score: ScoreFn = move |pos: &[i32], target: i32| pos.iter().map(|p| {
-            let dist = (p - target).abs();
-            dist * (dist + 1) / 2
-        }).sum();
-        Day::binary_search(&self.input[..], calc_score) as usize
+        let calc_score = |pos: &[i32], target: i32| pos.iter()
+            .map(|p| { let dist = (p - target).abs(); 
+                dist * (dist + 1) / 2 }).sum();
+
+        algorithms::binary_search(&self.input[..], calc_score) as usize
     }
 
     fn fmt_result(&self) -> String {
