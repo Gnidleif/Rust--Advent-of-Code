@@ -2,80 +2,70 @@ use std::{
     result::Result,
     error::Error,
     time::Instant,
-    collections::HashSet,
-};
-use itertools::{
-    Itertools,
-    FoldWhile::{Continue, Done},
+    ops::Sub,
 };
 
 pub struct Day {
-    input: Vec<usize>,
+    input: Vec<i32>,
 }
+
+type ScoreFn = fn(&[i32], i32) -> i32;
 
 impl Day {
     #[allow(dead_code)]
     pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
         let content = aoc_lib::create_input(2021, 7, run_sample).await?;
 
+        let mut sorted: Vec<i32> = content.split(",").map(|x| x.parse().unwrap()).collect();
+        sorted.sort();
+
         Ok(Day {
-            input: content.split(",")
-                .map(|x| x.parse().unwrap())
-                .collect(),
+            input: sorted,
         })
+    }
+
+    fn binary_search(v: &[i32], calc_score: ScoreFn) -> i32 {
+        let mut low = v.iter().min().unwrap().to_owned();
+        let mut high = v.iter().max().unwrap().to_owned();
+        let mut min = i32::MAX;
+
+        while low <= high {
+            let middle = (low + high) / 2;
+            let left = middle - 1;
+            let right = middle + 1;
+
+            let cost = calc_score(v, middle);
+            if cost < min {
+                min = cost;
+            }
+
+            if calc_score(v, left) < cost {
+                high = left;
+            }
+            else if calc_score(v, right) < cost {
+                low = right;
+            }
+            else {
+                break;
+            }
+        }
+
+        min
     }
 }
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
-        let cpy = self.input.clone();
-        let w = self.input.len();
-        let mut low = usize::MAX;
-        let mut set: HashSet<usize> = HashSet::new();
-        for x in 0..w {
-            let v = cpy[x];
-            if set.contains(&v) {
-                continue;
-            }
-            set.insert(v);
-
-            match (0..(w - 1)).map(|y| (y + (x + 1)) % w).fold_while(0, |mut s, i| {
-                s += if v > cpy[i] { v - cpy[i] } else { cpy[i] - v };
-                if s > low {
-                    Done(s)
-                } else {
-                    Continue(s)
-                }
-            }) {
-                Done(_) => continue,
-                Continue(sum) => low = sum,
-            };
-        }
-        low
+        let calc_score: ScoreFn = move |pos: &[i32], target: i32| pos.iter().map(|p| p.sub(target).abs()).sum();
+        Day::binary_search(&self.input[..], calc_score) as usize
     }
 
     fn part2(&self) -> usize {
-        let max = self.input.iter().max().unwrap();
-        let pts: Vec<usize> = (0..=*max).map(|i| self.input.iter().filter(|n| **n == i).count()).collect();
-        let w = pts.len();
-        let mut low = usize::MAX;
-
-        for x in 0..pts.len() {
-            match (0..(w - 1)).map(|y| (y + (x + 1)) % w).fold_while(0, |mut s, y| {
-                let diff = if x > y { x - y } else { y - x};
-                s += (0..diff).map(|i| i + 1).sum::<usize>() * pts[y];
-                if s > low {
-                    Done(s)
-                } else {
-                    Continue(s)
-                }
-            }) {
-                Done(_) => continue,
-                Continue(sum) => low = sum,
-            };
-        }
-
-        low
+        let calc_score: ScoreFn = move |pos: &[i32], target: i32| pos.iter().map(|p| {
+            let dist = (p - target).abs();
+            dist * (dist + 1) / 2
+        }).sum();
+        Day::binary_search(&self.input[..], calc_score) as usize
     }
 
     fn fmt_result(&self) -> String {
