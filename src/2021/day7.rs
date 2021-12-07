@@ -2,8 +2,12 @@ use std::{
     result::Result,
     error::Error,
     time::Instant,
+    collections::HashSet,
 };
-use aoc_lib::Point;
+use itertools::{
+    Itertools,
+    FoldWhile::{Continue, Done},
+};
 
 pub struct Day {
     input: Vec<usize>,
@@ -24,27 +28,54 @@ impl Day {
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
+        let cpy = self.input.clone();
         let w = self.input.len();
-        let m = self.input.iter().fold(self.input.clone(), |mut acc, _| {
-            let mut cpy = acc.clone();
-            cpy.rotate_right(1);
-            acc.extend(cpy);
-            acc
-        });
+        let mut low = usize::MAX;
+        let mut set: HashSet<usize> = HashSet::new();
+        for x in 0..w {
+            let v = cpy[x];
+            if set.contains(&v) {
+                continue;
+            }
+            set.insert(v);
 
-        for x in (0..m.len()).step_by(w) {
-            // let v1 = m[x];
-            println!("{:?}", &m[x..x+w]);
-            // for y in 1..w {
-            //     let v2 = m[(y * w) + x];
-            // }
+            match (0..(w - 1)).map(|y| (y + (x + 1)) % w).fold_while(0, |mut s, i| {
+                s += if v > cpy[i] { v - cpy[i] } else { cpy[i] - v };
+                if s > low {
+                    Done(s)
+                } else {
+                    Continue(s)
+                }
+            }) {
+                Done(_) => continue,
+                Continue(sum) => low = sum,
+            };
         }
-
-        0
+        low
     }
 
     fn part2(&self) -> usize {
-        0
+        let max = self.input.iter().max().unwrap();
+        let pts: Vec<usize> = (0..=*max).map(|i| self.input.iter().filter(|n| **n == i).count()).collect();
+        let w = pts.len();
+        let mut low = usize::MAX;
+
+        for x in 0..pts.len() {
+            match (0..(w - 1)).map(|y| (y + (x + 1)) % w).fold_while(0, |mut s, y| {
+                let diff = if x > y { x - y } else { y - x};
+                s += (0..diff).map(|i| i + 1).sum::<usize>() * pts[y];
+                if s > low {
+                    Done(s)
+                } else {
+                    Continue(s)
+                }
+            }) {
+                Done(_) => continue,
+                Continue(sum) => low = sum,
+            };
+        }
+
+        low
     }
 
     fn fmt_result(&self) -> String {
