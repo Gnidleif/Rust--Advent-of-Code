@@ -2,15 +2,12 @@ use std::{
     result::Result,
     error::Error,
     time::Instant,
-    collections::HashSet,
+    collections::{
+        HashSet,
+        HashMap,
+    },
 };
-use itertools::{
-    Itertools,
-    FoldWhile::{
-        Continue,
-        Done,
-    }
-};
+use itertools::Itertools;
 
 pub struct Day {
     input: Vec<String>,
@@ -26,62 +23,51 @@ impl Day {
         })
     }
 
-    fn create_key(line: &[String]) -> Vec<HashSet<char>> {
-        let base = line.iter()
-            .filter(|word| match word.len() { 5|6 => false, _ => true })
-            .map(|s| HashSet::from_iter(s.chars()))
-            .fold_while(vec![HashSet::new(); 10], |mut acc, word| {
-                let idx = match word.len() {
+    fn generate_key(left: &[String]) -> HashMap<String, usize> {
+        let base: HashMap<String, usize> = left.iter()
+            .filter(|s| match s.len() { 5|6 => false, _ => true })
+            .map(|s| 
+                (s.to_string(), match s.len() {
                     2 => 1,
                     3 => 7,
                     4 => 4,
                     7 => 8,
                     _ => unreachable!(),
-                };
-                if acc[idx].len() == 0 {
-                    acc[idx] = word;
-                }
+                })
+            ).collect::<HashMap<String, usize>>();
 
-                if acc.iter().filter(|n| n.len() > 0).count() == 4 {
-                    Done(acc)
-                }
-                else {
-                    Continue(acc)
-                }
-            }).into_inner();
+        let key4 = HashSet::from_iter((*base.iter().find(|(_, v)| **v == 4).unwrap().0).chars());
+        let key7 = HashSet::from_iter((*base.iter().find(|(_, v)| **v == 7).unwrap().0).chars());
 
-        line.iter()
-            .filter(|word| match word.len() { 5|6 => true, _ => false })
-            .map(|s| HashSet::from_iter(s.chars()))
-            .fold_while(base.clone(), |mut acc, word| {
-                let idx = match word.len() {
-                    5 => if word.intersection(&base[4]).count() == 2 {
+        let mut key = left.iter()
+            .filter(|s| match s.len() { 5|6 => true, _ => false })
+            .map(|s| {
+                (s.to_string(), match s.len() {
+                    5 => if Day::xcount(&s, &key4) == 2 {
                         2
-                    } else if word.intersection(&base[7]).count() == 3 {
+                    } else if Day::xcount(&s, &key7) == 3 {
                         3
                     } else {
                         5
                     },
-                    6 => if word.intersection(&base[4]).count() == 4 {
+                    6 => if Day::xcount(&s, &key4) == 4 {
                         9
-                    } else if word.intersection(&base[7]).count() == 3 {
+                    } else if Day::xcount(&s, &key7) == 3 {
                         0
                     } else {
                         6
                     },
                     _ => unreachable!(),
-                };
-                if acc[idx].len() == 0 {
-                    acc[idx] = word;
-                }
+                })
+            }).collect::<HashMap<String, usize>>();
+        key.extend(base);
 
-                if acc.iter().filter(|n| n.len() > 0).count() == 10 {
-                    Done(acc)
-                }
-                else {
-                    Continue(acc)
-                }
-            }).into_inner()
+        key
+    }
+
+    fn xcount(s: &str, b: &HashSet<char>) -> usize {
+        let a: HashSet<char> = HashSet::from_iter(s.chars());
+        a.intersection(&b).count()
     }
 }
 
@@ -107,21 +93,19 @@ impl aoc_lib::Day for Day {
 
     fn part2(&self) -> usize {
         let mut sum: usize = 0;
-        for line in self.input.iter() {    
-            let both: Vec<String> = line.split("|").map(|word| word.split_whitespace().map(|s| s.to_string()).collect::<Vec<_>>()).flatten().collect::<Vec<_>>();
-            let complete = Day::create_key(&both);
+        for line in self.input.iter() {
+            let both = &line.split("|")
+                .map(|side| side.split_whitespace()
+                    .map(|s| s.chars().sorted().collect::<String>()).collect::<Vec<_>>())
+                .flatten()
+                .collect::<Vec<_>>();
 
-            let right = &line.split("|").map(|s| s.to_string()).collect::<Vec<_>>()[1];
-            let output = right.split_whitespace().map(|s| HashSet::from_iter(s.chars())).collect::<Vec<_>>();
+            let (left, right) = (&both[0..10], &both[10..14]);
+            let key = Day::generate_key(left);
 
-            let mut capture = String::new();
-            for word in output.iter() {
-                match complete.iter().enumerate().find(|(_, set)| word == *set) {
-                    Some((i, _)) => capture.push_str(&i.to_string()[..]),
-                    None => (),
-                }
-            }
-            sum += capture.parse::<usize>().unwrap();
+            sum += right.iter()
+                .map(|word| key[word].to_string())
+                .collect::<String>().parse::<usize>().unwrap();
         }
         
         sum
