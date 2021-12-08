@@ -4,7 +4,7 @@ use std::{
     time::Instant,
     ops::Sub,
 };
-use aoc_lib::algorithms;
+use aoc_lib::algorithms::binary_search;
 
 pub struct Day {
     input: Vec<i32>,
@@ -29,7 +29,7 @@ impl aoc_lib::Day for Day {
         let calc_score = |pos: &[i32], target: i32| pos.iter()
             .map(|p| p.sub(target).abs()).sum();
 
-        algorithms::binary_search(&self.input[..], calc_score) as usize
+        binary_search(&self.input[..], calc_score) as usize
     }
 
     fn part2(&self) -> usize {
@@ -37,7 +37,7 @@ impl aoc_lib::Day for Day {
             .map(|p| { let dist = (p - target).abs(); 
                 dist * (dist + 1) / 2 }).sum();
 
-        algorithms::binary_search(&self.input[..], calc_score) as usize
+        binary_search(&self.input[..], calc_score) as usize
     }
 
     fn fmt_result(&self) -> String {
