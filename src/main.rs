@@ -28,7 +28,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // Box::new(_2015::day6::Day::new(run_sample).await?),
         // Box::new(_2015::day7::Day::new(run_sample).await?),
 
-        Box::new(_2020::day1::Day::new(run_sample).await?),
+        Box::new(_2020::day11::Day::new(run_sample).await?),
 
         // Box::new(_2021::day1::Day::new(run_sample).await?),
         // Box::new(_2021::day2::Day::new(run_sample).await?),
@@ -37,6 +37,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // Box::new(_2021::day5::Day::new(run_sample).await?),
         // Box::new(_2021::day6::Day::new(run_sample).await?),
         // Box::new(_2021::day7::Day::new(run_sample).await?),
+        Box::new(_2021::day8::Day::new(run_sample).await?),
     ];
 
     for day in days.iter() {
