@@ -6,6 +6,7 @@ use std::{
 use aoc_lib::Point;
 
 pub struct Day {
+    height: usize,
     width: usize,
     input: Vec<u32>
 }
@@ -19,42 +20,47 @@ impl Day {
             line.chars().map(|c| c.to_digit(10).unwrap()).collect::<Vec<u32>>()).collect();
 
         Ok(Day {
+            height: v.len(),
             width: v[0].len(),
             input: v.iter().flatten().map(|d| *d).collect(),
         })
     }
 
-    fn adjacent_indices(p: Point, w: usize, len: usize) -> Vec<usize> {
-        let dpos: Vec<(i32, i32)> = vec![
+    fn adjacent_indices(px: i32, py: i32, w: i32, l: i32) -> Vec<usize> {
+        let dpos = vec![
             (0, -1),
-            (1, 0),
-            (0, 1),
             (-1, 0),
+            (0, 1),
+            (1, 0),
         ];
-        let mut result: Vec<usize> = vec![];
-        for i in 0..dpos.len() {
-            let x = p.x as i32 + dpos[i].0;
-            let y = p.y as i32 + dpos[i].1;
-            let pos = (y * w as i32) + x;
-
-            println!("({}, {}) = {}", x, y, pos);
-            if pos >= 0 && pos < len as i32 {
-                result.push(pos as usize);
+        let mut indices = Vec::new();
+        for (dx, dy) in dpos.iter() {
+            let y = py + dy;
+            if y >= w || y < 0 {
+                continue;
             }
+            let x = px + dx;
+            if x < 0 {
+                continue;
+            }
+            let i = (y * w) + x;
+            if i >= l {
+                continue;
+            }
+            indices.push(i as usize);
         }
 
-        result
+        indices
     }
 }
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
-        for x in (0..self.input.len()).step_by(self.width) {
-            println!("{:?}", &self.input[x..x+self.width]);
-            for y in x..x+self.width {
-                let adjacent = Day::adjacent_indices(Point {x: x, y: y}, self.width, self.input.len());
-                println!("{:?}", adjacent);
-            };
+        println!("{} x {} = {} | {}", self.width, self.height, self.width * self.height, self.input.len());
+        for x in 0..self.width as i32 {
+            for y in 0..self.height as i32 {
+                let indices = Day::adjacent_indices(x, y, self.width as i32, self.input.len() as i32);
+            }
         }
         0
     }
