@@ -92,20 +92,29 @@ impl aoc_lib::Day for Day {
     }
 
     fn part2(&self) -> usize {
-        let mut sum: usize = 0;
+        let (sx, rx) = std::sync::mpsc::channel::<String>();
         for line in self.input.iter() {
-            let both = &line.split("|")
-                .map(|side| side.split_whitespace()
-                    .map(|s| s.chars().sorted().collect::<String>()).collect::<Vec<_>>())
-                .flatten()
-                .collect::<Vec<_>>();
+            let sum_sender = sx.clone();
+            let clone = line.clone();
+            
+            std::thread::spawn(move || {
+                let both = &clone.split("|")
+                    .map(|side| side.split_whitespace()
+                        .map(|s| s.chars().sorted().collect::<String>()).collect::<Vec<_>>())
+                    .flatten()
+                    .collect::<Vec<_>>();
 
-            let (left, right) = (&both[0..10], &both[10..14]);
-            let key = Day::generate_key(left);
+                let (left, right) = (&both[0..10], &both[10..14]);
+                let key = Day::generate_key(left);
+                sum_sender.send(right.iter()
+                    .map(|word| key[word].to_string())
+                    .collect::<String>()).unwrap();
+            });
+        }
 
-            sum += right.iter()
-                .map(|word| key[word].to_string())
-                .collect::<String>().parse::<usize>().unwrap();
+        let mut sum = 0;
+        for _ in 0..self.input.len() {
+            sum += rx.recv().unwrap().parse::<usize>().unwrap();
         }
         
         sum

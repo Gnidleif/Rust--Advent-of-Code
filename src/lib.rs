@@ -74,7 +74,6 @@ pub struct Point {
     pub y: usize,
 }
 
-
 pub mod iterators {
     use super::Point;
     use itertools::{
