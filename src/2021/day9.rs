@@ -2,8 +2,32 @@ use std::{
     result::Result,
     error::Error,
     time::Instant,
+    collections::HashMap,
 };
-use aoc_lib::Point;
+
+#[derive(Debug)]
+struct Neighborhood {
+    indices: HashMap<(i32, i32), usize>,
+}
+
+impl Neighborhood {
+    fn new(x: i32, y: i32, w: i32, l: i32) -> Self {
+        let m: HashMap<(i32, i32), usize> = vec![
+            (0, -1),
+            (-1, 0),
+            (0, 0),
+            (0, 1),
+            (1, 0),
+        ].iter().map(|(dx, dy)| ((dx, dy), ((y + dy) * w) + (x + dx)))
+            .filter(|(_, i)| *i >= 0 && *i < l)
+            .map(|((dx, dy), i)| ((*dx, *dy), i as usize))
+            .collect::<HashMap<_, _>>();
+
+        Neighborhood {
+            indices: m,
+        }
+    }
+}
 
 pub struct Day {
     height: usize,
@@ -19,50 +43,34 @@ impl Day {
         let v: Vec<Vec<u32>> = content.lines().map(|line| 
             line.chars().map(|c| c.to_digit(10).unwrap()).collect::<Vec<u32>>()).collect();
 
+        let h = v.len();
+        let w = v[0].len();
+        
         Ok(Day {
-            height: v.len(),
-            width: v[0].len(),
+            height: h,
+            width: w,
             input: v.iter().flatten().map(|d| *d).collect(),
         })
-    }
-
-    fn adjacent_indices(px: i32, py: i32, w: i32, l: i32) -> Vec<usize> {
-        let dpos = vec![
-            (0, -1),
-            (-1, 0),
-            (0, 1),
-            (1, 0),
-        ];
-        let mut indices = Vec::new();
-        for (dx, dy) in dpos.iter() {
-            let y = py + dy;
-            if y >= w || y < 0 {
-                continue;
-            }
-            let x = px + dx;
-            if x < 0 {
-                continue;
-            }
-            let i = (y * w) + x;
-            if i >= l {
-                continue;
-            }
-            indices.push(i as usize);
-        }
-
-        indices
     }
 }
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
-        println!("{} x {} = {} | {}", self.width, self.height, self.width * self.height, self.input.len());
-        for x in 0..self.width as i32 {
-            for y in 0..self.height as i32 {
-                let indices = Day::adjacent_indices(x, y, self.width as i32, self.input.len() as i32);
-            }
+        let neighborhoods = (0..self.width as i32).map(|x| 
+            (0..self.height as i32).map(|y| {
+                Neighborhood::new(x, y, self.width as i32, self.input.len() as i32)
+            }).collect::<Vec<_>>()).flatten();
+        
+        let mut result = 0;
+        for nb in neighborhoods {
+            let me = self.input[nb.indices[&(0, 0)]];
+            match nb.indices.iter().find(|(_, i)| self.input[**i] < me) {
+                Some(_) => continue,
+                None => result += me + 1,
+            };
         }
-        0
+
+        result as usize
     }
 
     fn part2(&self) -> usize {
