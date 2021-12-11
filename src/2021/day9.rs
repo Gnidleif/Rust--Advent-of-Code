@@ -5,30 +5,6 @@ use std::{
     collections::HashMap,
 };
 
-#[derive(Debug)]
-struct Neighborhood {
-    indices: HashMap<(i32, i32), usize>,
-}
-
-impl Neighborhood {
-    fn new(x: i32, y: i32, w: i32, l: i32) -> Self {
-        let m: HashMap<(i32, i32), usize> = vec![
-            (0, -1),
-            (-1, 0),
-            (0, 0),
-            (0, 1),
-            (1, 0),
-        ].iter().map(|(dx, dy)| ((dx, dy), ((y + dy) * w) + (x + dx)))
-            .filter(|(_, i)| *i >= 0 && *i < l)
-            .map(|((dx, dy), i)| ((*dx, *dy), i as usize))
-            .collect::<HashMap<_, _>>();
-
-        Neighborhood {
-            indices: m,
-        }
-    }
-}
-
 pub struct Day {
     height: usize,
     width: usize,
@@ -52,21 +28,34 @@ impl Day {
             input: v.iter().flatten().map(|d| *d).collect(),
         })
     }
+
+    fn generate_neighbors(x: i32, y: i32, w: i32, l: i32) -> HashMap<(i32, i32), usize> {
+        vec![
+            (0, -1),
+            (-1, 0),
+            (0, 0),
+            (0, 1),
+            (1, 0),
+        ].iter().map(|(dx, dy)| ((dx, dy), ((y + dy) * w) + (x + dx)))
+            .filter(|(_, i)| *i >= 0 && *i < l)
+            .map(|((dx, dy), i)| ((*dx, *dy), i as usize))
+            .collect::<HashMap<_, _>>()
+    }
 }
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
-        let neighborhoods = (0..self.width as i32).map(|x| 
-            (0..self.height as i32).map(|y| {
-                Neighborhood::new(x, y, self.width as i32, self.input.len() as i32)
-            }).collect::<Vec<_>>()).flatten();
-        
+        let maps = (0..self.height as i32).map(|y| 
+            (0..self.width as i32).map(|x| 
+                Day::generate_neighbors(x, y, self.width as i32, self.input.len() as i32))
+                .collect::<Vec<_>>()).flatten().collect::<Vec<_>>();
+
         let mut result = 0;
-        for nb in neighborhoods {
-            let me = self.input[nb.indices[&(0, 0)]];
-            match nb.indices.iter().find(|(_, i)| self.input[**i] < me) {
+        for nb in maps.iter() {
+            let me = self.input[nb[&(0, 0)]];
+            match nb.iter().find(|(_, i)| self.input[**i] < me) {
                 Some(_) => continue,
-                None => result += me + 1,
+                None => result += me + 1
             };
         }
 
