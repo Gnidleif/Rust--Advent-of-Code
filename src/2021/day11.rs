@@ -6,8 +6,8 @@ use std::{
 };
 
 pub struct Day {
-    delta: Vec<(i32, i32)>,
     dimension: usize,
+    delta: Vec<(i32, i32)>,
     input: Vec<i32>,
 }
 
@@ -17,10 +17,10 @@ impl Day {
         let content = aoc_lib::create_input(2021, 11, run_sample).await?;
         
         Ok(Day {
+            dimension: 10,
             delta: (-1..=1).map(|dx| (-1..=1).map(move |dy| (dx, dy)))
                 .flatten().filter(|(dx, dy)| *dx != 0 || *dy != 0)
                 .collect::<Vec<_>>(),
-            dimension: 10,
             input: content.lines()
                 .map(|line| line.chars().map(|c| c.to_digit(10).unwrap() as i32).collect::<Vec<_>>())
                 .flatten().collect(),
@@ -28,7 +28,7 @@ impl Day {
     }
 
     fn handle_flashes(octopi: &mut Vec<i32>, flashed: &mut HashSet<usize>, dim: &usize, delta: &Vec<(i32, i32)>) -> usize {
-        let indices = octopi.iter()
+        let mut indices = octopi.iter()
             .enumerate()
             .filter(|(_, v)| **v > 9)
             .filter(|(i, _)| !flashed.contains(i))
@@ -36,7 +36,7 @@ impl Day {
             .collect::<Vec<_>>();
         
         if indices.len() > 0 {
-            for i in indices.into_iter() {
+            while let Some(i) = indices.pop() {
                 flashed.insert(i);
                 let x = (i % dim) as i32;
                 let y = (i as i32 - x) / *dim as i32;

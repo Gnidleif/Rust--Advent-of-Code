@@ -29,16 +29,19 @@ impl Day {
         })
     }
 
-    fn generate_neighbors(x: i32, y: i32, w: i32, l: i32) -> HashMap<(i32, i32), usize> {
+    fn generate_neighbors(x: i32, y: i32, w: i32, h: i32, l: i32) -> HashMap<(i32, i32), usize> {
         vec![
             (0, -1),
             (-1, 0),
             (0, 0),
             (0, 1),
             (1, 0),
-        ].iter().map(|(dx, dy)| ((dx, dy), ((y + dy) * w) + (x + dx)))
+        ].into_iter().map(|(kx, ky)| (kx, ky, x + kx, y + ky))
+            .filter(|(_, _, dx, _)| *dx >= 0 && *dx < w)
+            .filter(|(_, _, _, dy)| *dy >= 0 && *dy < h)
+            .map(|(kx, ky, dx, dy)| ((kx, ky), (dy * w) + dx))
             .filter(|(_, i)| *i >= 0 && *i < l)
-            .map(|((dx, dy), i)| ((*dx, *dy), i as usize))
+            .map(|(p, i)| (p, i as usize))
             .collect::<HashMap<_, _>>()
     }
 }
@@ -47,7 +50,7 @@ impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
         let maps = (0..self.height as i32).map(|y| 
             (0..self.width as i32).map(|x| 
-                Day::generate_neighbors(x, y, self.width as i32, self.input.len() as i32))
+                Day::generate_neighbors(x, y, self.width as i32, self.height as i32, self.input.len() as i32))
                 .collect::<Vec<_>>()).flatten().collect::<Vec<_>>();
 
         let mut result = 0;
