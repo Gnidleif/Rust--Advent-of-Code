@@ -27,40 +27,41 @@ impl Day {
         })
     }
 
-    fn run_flashes(&self, octopi: &mut Vec<i32>) -> HashSet<usize> {
-        let mut flashed: HashSet<usize> = HashSet::new();
-        let mut indices = octopi.iter()
+    fn handle_flashes(octopi: &mut Vec<i32>, flashed: &mut HashSet<usize>, dim: &usize, delta: &Vec<(i32, i32)>) -> usize {
+        let indices = octopi.iter()
             .enumerate()
             .filter(|(_, v)| **v > 9)
+            .filter(|(i, _)| !flashed.contains(i))
             .map(|(i, _)| i)
             .collect::<Vec<_>>();
-
-        while indices.len() > 0 {
+        
+        if indices.len() > 0 {
             for i in indices.into_iter() {
                 flashed.insert(i);
-                let x = (i % self.dimension) as i32;
-                let y = (i as i32 - x) / self.dimension as i32;
+                let x = (i % dim) as i32;
+                let y = (i as i32 - x) / *dim as i32;
 
-                let neighbors = self.delta.iter()
+                let neighbors = delta.iter()
                     .map(|(dx, dy)| (x + dx, y + dy))
-                    .filter(|(dx, _)| *dx >= 0 && *dx < self.dimension as i32)
-                    .filter(|(_, dy)|  *dy >= 0 && *dy < self.dimension as i32)
-                    .map(|(dx, dy)| (dy * self.dimension as i32) + dx)
+                    .filter(|(dx, _)| *dx >= 0 && *dx < *dim as i32)
+                    .filter(|(_, dy)| *dy >= 0 && *dy < *dim as i32)
+                    .map(|(dx, dy)| (dy * *dim as i32) + dx)
                     .filter(|j| *j >= 0 && *j < octopi.len() as i32)
+                    .map(|j| j as usize)
                     .collect::<Vec<_>>();
 
-                for j in neighbors.iter() {
-                    octopi[*j as usize] += 1;
+                for j in neighbors.into_iter() {
+                    octopi[j] += 1;
                 }
             }
-
-            indices = octopi.iter().enumerate()
-                .filter(|(_, v)| **v > 9)
-                .filter(|(i, _)| !flashed.contains(i))
-                .map(|(i, _)| i).collect::<Vec<_>>();
+            return Day::handle_flashes(octopi, flashed, dim, delta);
         }
 
-        flashed
+        for i in flashed.iter() {
+            octopi[*i] = 0;
+        }
+
+        flashed.len()
     }
 }
 
@@ -69,16 +70,11 @@ impl aoc_lib::Day for Day {
         let mut result = 0;
         let mut octopi = self.input.clone();
         
-        for _s in 0..100 {
+        for _ in 0..100 {
             for i in 0..octopi.len() {
                 octopi[i] += 1;
             }
-
-            let flashed = self.run_flashes(&mut octopi);
-            for i in flashed.into_iter() {
-                result += 1;
-                octopi[i] = 0;
-            }
+            result += Day::handle_flashes(&mut octopi, &mut HashSet::new(), &self.dimension, &self.delta);
         }
 
         result
@@ -92,14 +88,10 @@ impl aoc_lib::Day for Day {
             for i in 0..octopi.len() {
                 octopi[i] += 1;
             }
-
-            let flashed = self.run_flashes(&mut octopi);
-            for i in flashed.into_iter() {
-                octopi[i] = 0;
-            }
+            let _ = Day::handle_flashes(&mut octopi, &mut HashSet::new(), &self.dimension, &self.delta);
             result += 1;
         }
-        
+
         result
     }
 
@@ -122,7 +114,7 @@ mod testing {
     #[test]
     fn run() {
         let day = aw!(super::Day::new(false)).unwrap();
-        assert_eq!(0, day.part1());
-        assert_eq!(0, day.part2());
+        assert_eq!(1735, day.part1());
+        assert_eq!(400, day.part2());
     }
 }

@@ -7,4 +7,5 @@
 #[path = "2021/day7.rs"] pub mod day7;
 #[path = "2021/day8.rs"] pub mod day8;
 #[path = "2021/day9.rs"] pub mod day9;
+#[path = "2021/day10.rs"] pub mod day10;
 #[path = "2021/day11.rs"] pub mod day11;
