@@ -3,6 +3,7 @@ use std::{
     error::Error,
     path::Path,
     fs,
+    hash::Hash,
 };
 use http::{header::{HeaderMap}, HeaderValue};
 
@@ -68,7 +69,7 @@ pub trait Day {
     fn fmt_result(&self) -> String;
 }
 
-#[derive(Clone, Debug)]
+#[derive(Hash, PartialEq, Eq, Clone, Copy, Debug)]
 pub struct Point {
     pub x: usize,
     pub y: usize,
