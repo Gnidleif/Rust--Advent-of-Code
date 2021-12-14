@@ -51,7 +51,7 @@ impl Day {
                             _ => unreachable!(),
                         }
                         None => None,
-                }).collect::<Vec<_>>(),
+                    }).collect::<Vec<_>>(),
             input: points.iter()
                 .fold(vec![false; w * h], |mut acc, p| {
                     let i = (p.y * w) + p.x;
@@ -62,36 +62,13 @@ impl Day {
     }
 
     fn fold_x(n: usize, w: &mut usize, h: usize, grid: Vec<bool>) -> Vec<bool> {
-        let left = grid.iter().enumerate().filter_map(|(i, v)| {
-            let x = i % *w;
-            match x {
-                x if x < n => Some(v),
-                _ => None,
-            }
-        }).copied().collect::<Vec<_>>();
+        let w2 = *w - (n + 1);
 
-        let result = grid.iter().enumerate().filter(|(_, v)| **v)
-            .filter_map(|(i, _)| {
-                let x = i % *w;
-                let y = (i - x) / *w;
-                match x {
-                    x if x > n => {
-                        let x = (*w - 1) - x;
-                        let j = (y * *w) + x;
-                        Some(j)
-                    },
-                    _ => None,
-                }
-            }).fold(left, |mut v, idx| {
-                v[idx] = true;
-                v
-            });
-        *w -= n + 1;
-        
-        result
+        Vec::new()
     }
 
     fn fold_y(n: usize, w: usize, h: &mut usize, grid: Vec<bool>) -> Vec<bool> {
+        let h2 = *h - (n + 1);
         let v = grid.iter().enumerate().filter(|(_, v)| **v)
             .filter_map(|(i, _)| {
                 let x = i % w;
@@ -106,12 +83,12 @@ impl Day {
                     _ => None,
                 }
             })
-            .fold(vec![false; (*h - (n + 1)) * w], |mut v, idx| {
+            .fold(vec![false; h2 * w], |mut v, idx| {
                 v[idx] = true;
                 v
             });
-        *h -= n + 1;
 
+        *h = h2;
         v
     }
 }
@@ -137,6 +114,11 @@ impl aoc_lib::Day for Day {
     fn part2(&self) -> usize {
         let mut grid = self.input.clone();
         let (mut w, mut h) = (self.width, self.height);
+        println!("Before:\n({}, {})", w, h);
+        for i in (0..grid.len()).step_by(w) {
+            let present = &grid[i..i+w].iter().map(|b| if *b { "#" } else { " " }).collect::<Vec<_>>();
+            println!("{:?}", present);
+        }
         for fold in self.folds.iter() {
             grid = match fold {
                 Fold::X(n) => Day::fold_x(*n, &mut w, h, grid),
