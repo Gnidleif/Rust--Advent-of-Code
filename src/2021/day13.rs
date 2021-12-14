@@ -2,6 +2,7 @@ use std::{
     result::Result,
     error::Error,
     time::Instant,
+    collections::HashSet,
 };
 use regex::Regex;
 use aoc_lib::Point;
@@ -10,7 +11,7 @@ pub struct Day {
     width: usize,
     height: usize,
     folds: Vec<Fold>,
-    input: Vec<bool>,
+    input: HashSet<Point>,
 }
 
 #[derive(Debug)]
@@ -34,7 +35,7 @@ impl Day {
                         y: cap["y"].parse::<usize>().unwrap(),
                     }),
                     None => None,
-            }).collect::<Vec<_>>();
+            }).collect::<HashSet<_>>();
 
         let w: usize = points.iter().map(|p| p.x).max().unwrap() + 1;
         let h: usize = points.iter().map(|p| p.y).max().unwrap() + 1;
@@ -52,44 +53,36 @@ impl Day {
                         }
                         None => None,
                     }).collect::<Vec<_>>(),
-            input: points.iter()
-                .fold(vec![false; w * h], |mut acc, p| {
-                    let i = (p.y * w) + p.x;
-                    acc[i] = true;
-                    acc
-                }),
+            input: points,
         })
     }
 
-    fn fold_x(n: usize, w: &mut usize, h: usize, grid: Vec<bool>) -> Vec<bool> {
-        let w2 = *w - (n + 1);
+    fn fold_y(n: usize, h: &mut usize, set: HashSet<Point>) -> HashSet<Point> {
+        let result = set.iter().filter_map(|p| match p.y {
+            y if y > n => Some(Point {
+                    x: p.x,
+                    y: (*h - 1) - y
+                }),
+            y if y < n => Some(*p),
+            _ => None,
+        }).collect::<HashSet<_>>();
+        *h -= n + 1;
 
-        Vec::new()
+        result
     }
 
-    fn fold_y(n: usize, w: usize, h: &mut usize, grid: Vec<bool>) -> Vec<bool> {
-        let h2 = *h - (n + 1);
-        let v = grid.iter().enumerate().filter(|(_, v)| **v)
-            .filter_map(|(i, _)| {
-                let x = i % w;
-                let y = (i - x) / w;
-                match y {
-                    y if y > n => {
-                        let y = (*h - 1) - y;
-                        let j = (y * w) + x;
-                        Some(j)
-                    },
-                    y if y < n => Some(i),
-                    _ => None,
-                }
-            })
-            .fold(vec![false; h2 * w], |mut v, idx| {
-                v[idx] = true;
-                v
-            });
+    fn fold_x(n: usize, w: &mut usize, set: HashSet<Point>) -> HashSet<Point> {
+        let result = set.iter().filter_map(|p| match p.x {
+            x if x > n => Some(Point {
+                x: (*w - 1) - x,
+                y: p.y,
+            }),
+            x if x < n => Some(*p),
+            _ => None,
+        }).collect::<HashSet<_>>();
+        *w -= n + 1;
 
-        *h = h2;
-        v
+        result
     }
 }
 
@@ -97,41 +90,40 @@ impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
         let mut grid = self.input.clone();
         let (mut w, mut h) = (self.width, self.height);
+
         grid = match self.folds[0] {
-            Fold::X(n) => Day::fold_x(n, &mut w, h, grid),
-            Fold::Y(n) => Day::fold_y(n, w, &mut h, grid),
+            Fold::Y(n) => Day::fold_y(n, &mut h, grid),
+            Fold::X(n) => Day::fold_x(n, &mut w, grid),
         };
-
-        println!("({}, {})", w, h);
-        for i in (0..grid.len()).step_by(self.width) {
-            let present = &grid[i..i+self.width].iter().map(|b| if *b { "#" } else { " " }).collect::<Vec<_>>();
-            println!("{:?}", present);
-        }
-
-        grid.iter().map(|v| if *v { 1 } else { 0 }).sum()
+        
+        grid.len()
     }
 
     fn part2(&self) -> usize {
         let mut grid = self.input.clone();
         let (mut w, mut h) = (self.width, self.height);
-        println!("Before:\n({}, {})", w, h);
-        for i in (0..grid.len()).step_by(w) {
-            let present = &grid[i..i+w].iter().map(|b| if *b { "#" } else { " " }).collect::<Vec<_>>();
-            println!("{:?}", present);
-        }
+
         for fold in self.folds.iter() {
             grid = match fold {
-                Fold::X(n) => Day::fold_x(*n, &mut w, h, grid),
-                Fold::Y(n) => Day::fold_y(*n, w, &mut h, grid),
+                Fold::Y(n) => Day::fold_y(*n, &mut h, grid),
+                Fold::X(n) => Day::fold_x(*n, &mut w, grid),
             };
+        }
 
-            println!("({}, {})", w, h);
-            for i in (0..grid.len()).step_by(w) {
-                let present = &grid[i..i+w].iter().map(|b| if *b { "#" } else { " " }).collect::<Vec<_>>();
-                println!("{:?}", present);
+        let mut text: Vec<char> = vec![' '; w * h];
+        for x in 0..w {
+            for y in 0..h {
+                if grid.contains(&Point {x: x, y: y}) {
+                    let i = (y * w) + x;
+                    text[i] = '#';
+                }
             }
         }
-        0
+        for i in (0..w*h).step_by(w) {
+            println!("{:?}", &text[i..i+w]);
+        }
+
+        grid.len()
     }
 
     fn fmt_result(&self) -> String {
