@@ -110,18 +110,19 @@ impl aoc_lib::Day for Day {
             };
         }
 
-        let mut text: Vec<char> = vec![' '; w * h];
-        for x in 0..w {
-            for y in 0..h {
-                if grid.contains(&Point {x: x, y: y}) {
-                    let i = (y * w) + x;
-                    text[i] = '#';
-                }
-            }
-        }
-        for i in (0..w*h).step_by(w) {
-            println!("{:?}", &text[i..i+w]);
-        }
+        // let mut text = String::new();
+        // for y in 0..h {
+        //     text.push_str("■");
+        //     for x in 0..w {
+        //         text.push_str(if grid.contains(&Point{x: x, y: y}) {
+        //             " "
+        //         } else {
+        //             "■"
+        //         });
+        //     }
+        //     text.push_str("■\n");
+        // }
+        // println!("{}", text);
 
         grid.len()
     }
