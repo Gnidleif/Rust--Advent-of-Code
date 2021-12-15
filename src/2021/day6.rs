@@ -59,7 +59,7 @@ mod testing {
     #[test]
     fn run() {
         let day = aw!(super::Day::new(false)).unwrap();
-        assert_eq!(0, day.part1());
-        assert_eq!(0, day.part2());
+        assert_eq!(349549, day.part1());
+        assert_eq!(1589590444365, day.part2());
     }
 }

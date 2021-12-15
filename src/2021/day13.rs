@@ -24,7 +24,7 @@ impl Day {
     #[allow(dead_code)]
     pub async fn new(run_sample: bool) -> Result<Self, Box<dyn Error>> {
         let content = aoc_lib::create_input(2021, 13, run_sample).await?;
-        let fold_rgx = Regex::new(r"^[\w\s]+(?P<fold>[xy])=(?P<amount>\d+)$").unwrap();
+        let fold_rgx = Regex::new(r"^[\w\s]+(?P<fold>[xy])=(?P<at>\d+)$").unwrap();
         let point_rgx = Regex::new(r"^(?P<x>\d+),(?P<y>\d+)").unwrap();
 
         let points = content.lines()
@@ -47,8 +47,8 @@ impl Day {
                 .filter_map(|line| 
                     match fold_rgx.captures(line) {
                         Some(cap) => match &cap["fold"] {
-                            "x" => Some(Fold::X(cap["amount"].parse::<usize>().unwrap())),
-                            "y" => Some(Fold::Y(cap["amount"].parse::<usize>().unwrap())),
+                            "x" => Some(Fold::X(cap["at"].parse::<usize>().unwrap())),
+                            "y" => Some(Fold::Y(cap["at"].parse::<usize>().unwrap())),
                             _ => unreachable!(),
                         }
                         None => None,
@@ -110,19 +110,19 @@ impl aoc_lib::Day for Day {
             };
         }
 
-        // let mut text = String::new();
-        // for y in 0..h {
-        //     text.push_str("■");
-        //     for x in 0..w {
-        //         text.push_str(if grid.contains(&Point{x: x, y: y}) {
-        //             " "
-        //         } else {
-        //             "■"
-        //         });
-        //     }
-        //     text.push_str("■\n");
-        // }
-        // println!("{}", text);
+        let mut text = String::new();
+        for y in 0..h {
+            text.push_str("■");
+            for x in 0..w {
+                text.push_str(if grid.contains(&Point{x: x, y: y}) {
+                    " "
+                } else {
+                    "■"
+                });
+            }
+            text.push_str("■\n");
+        }
+        println!("{}", text);
 
         grid.len()
     }
