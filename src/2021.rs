@@ -11,3 +11,4 @@
 #[path = "2021/day11.rs"] pub mod day11;
 #[path = "2021/day12.rs"] pub mod day12;
 #[path = "2021/day13.rs"] pub mod day13;
+#[path = "2021/day14.rs"] pub mod day14;

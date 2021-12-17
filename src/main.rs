@@ -40,9 +40,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // Box::new(_2021::day8::Day::new(run_sample).await?),
         // Box::new(_2021::day9::Day::new(run_sample).await?),
         // Box::new(_2021::day10::Day::new(run_sample).await?),
-        Box::new(_2021::day11::Day::new(run_sample).await?),
-        Box::new(_2021::day12::Day::new(run_sample).await?),
-        Box::new(_2021::day13::Day::new(run_sample).await?),
+        // Box::new(_2021::day11::Day::new(run_sample).await?),
+        // Box::new(_2021::day12::Day::new(run_sample).await?),
+        // Box::new(_2021::day13::Day::new(run_sample).await?),
+        Box::new(_2021::day14::Day::new(run_sample).await?),
     ];
 
     for day in days.iter() {
