@@ -5,7 +5,7 @@ use std::{
 };
 
 pub struct Day {
-
+    input: Vec<Vec<usize>>,
 }
 
 impl Day {
@@ -14,18 +14,32 @@ impl Day {
         let content = aoc_lib::create_input(2022, 1, run_sample).await?;
 
         Ok(Day {
-
+            input: content
+                .split("\r\n\r\n")
+                .map(|line| line.lines().map(|x| x.parse::<usize>().unwrap()).collect())
+                .collect(),
         })
     }
 }
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
-        0
+        self.input
+            .iter()
+            .map(|lines| lines.iter().sum::<usize>())
+            .max()
+            .unwrap()
     }
 
     fn part2(&self) -> usize {
-        0
+        let mut sums = self.input
+            .iter()
+            .map(|lines| lines.iter().sum::<usize>())
+            .collect::<Vec<usize>>();
+            
+        sums.sort_by(|a, b| b.cmp(a));
+
+        sums[0..=2].iter().sum::<usize>()
     }
 
     fn fmt_result(&self) -> String {
@@ -35,7 +49,7 @@ impl aoc_lib::Day for Day {
         let now2 = Instant::now();
         let p2 = self.part2();
         let elapsed2 = now2.elapsed().as_micros();
-        format!("Day#### (2022): ({}: {}μs, {}: {}μs)", p1, elapsed1, p2, elapsed2)
+        format!("Day1 (2022): ({}: {}μs, {}: {}μs)", p1, elapsed1, p2, elapsed2)
     }
 }
 
