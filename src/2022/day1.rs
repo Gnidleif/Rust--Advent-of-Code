@@ -36,7 +36,7 @@ impl aoc_lib::Day for Day {
             .iter()
             .map(|lines| lines.iter().sum::<usize>())
             .collect::<Vec<usize>>();
-            
+
         sums.sort_by(|a, b| b.cmp(a));
 
         sums[0..=2].iter().sum::<usize>()
@@ -61,7 +61,7 @@ mod testing {
     #[test]
     fn run() {
         let day = aw!(super::Day::new(false)).unwrap();
-        assert_eq!(0, day.part1());
-        assert_eq!(0, day.part2());
+        assert_eq!(69795, day.part1());
+        assert_eq!(208437, day.part2());
     }
 }
