@@ -19,6 +19,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let days: Vec<Box<dyn aoc_lib::Day>> = vec![
         Box::new(_2022::day1::Day::new(run_sample).await?),
+        Box::new(_2022::day2::Day::new(run_sample).await?),
     ];
 
     for day in days.iter() {

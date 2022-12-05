@@ -5,10 +5,19 @@ use std::{
     fs,
     hash::Hash,
 };
-use http::{header::{HeaderMap}, HeaderValue};
+use http::{
+    header::{
+        HeaderMap,
+    },
+    HeaderValue,
+};
 
 pub async fn create_input(year: u16, day: u8, run_sample: bool) -> Result<String, Box<dyn Error>> {
-    let dir_path = if !run_sample { format!("./input/{}", year) } else { format!("./sample/{}", year) };
+    let dir_path = if !run_sample { 
+        format!("./input/{}", year) 
+    } else { 
+        format!("./sample/{}", year) 
+    };
     let file_path = format!("{}/{}.log", dir_path, day);
 
     if !Path::new(&file_path).is_file() {

@@ -5,7 +5,7 @@ use std::{
 };
 
 pub struct Day {
-    input: Vec<Vec<usize>>,
+
 }
 
 impl Day {
@@ -14,32 +14,18 @@ impl Day {
         let content = aoc_lib::create_input(2022, 1, run_sample).await?;
 
         Ok(Day {
-            input: content
-                .split("\r\n\r\n")
-                .map(|line| line.lines().map(|x| x.parse::<usize>().unwrap()).collect())
-                .collect(),
+
         })
     }
 }
 
 impl aoc_lib::Day for Day {
     fn part1(&self) -> usize {
-        self.input
-            .iter()
-            .map(|lines| lines.iter().sum::<usize>())
-            .max()
-            .unwrap()
+        0
     }
 
     fn part2(&self) -> usize {
-        let mut sums = self.input
-            .iter()
-            .map(|lines| lines.iter().sum::<usize>())
-            .collect::<Vec<usize>>();
-
-        sums.sort_by(|a, b| b.cmp(a));
-
-        sums[0..=2].iter().sum::<usize>()
+        0
     }
 
     fn fmt_result(&self) -> String {
@@ -49,7 +35,7 @@ impl aoc_lib::Day for Day {
         now = Instant::now();
         let p2 = self.part2();
         let elapsed2 = now.elapsed().as_micros();
-        format!("Day1 (2022): ({}: {}μs, {}: {}μs) total: {}μs", p1, elapsed1, p2, elapsed2, elapsed1 + elapsed2)
+        format!("Day2 (2022): ({}: {}μs, {}: {}μs) total: {}μs", p1, elapsed1, p2, elapsed2, elapsed1 + elapsed2)
     }
 }
 
@@ -61,7 +47,7 @@ mod testing {
     #[test]
     fn run() {
         let day = aw!(super::Day::new(false)).unwrap();
-        assert_eq!(69795, day.part1());
-        assert_eq!(208437, day.part2());
+        assert_eq!(0, day.part1());
+        assert_eq!(0, day.part2());
     }
 }
